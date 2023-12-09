@@ -1,0 +1,42 @@
+### Returns weather by city_name
+# @no-redirect
+GET http://localhost:8080/api/v1/weather/citiName/{{cityName}}
+Accept: application/json
+
+### Returns weather by id
+# @no-redirect
+GET http://localhost:8080/api/v1/weather/{{id}}
+Accept: application/json
+
+### Returns all weathers by temperature
+# @no-redirect
+GET http://localhost:8080/api/v1/getAllWeathersByTemp/{{temp}}
+Accept: application/json
+
+
+### Returns all weathers by pressure
+# @no-redirect
+GET http://localhost:8080/api/v1/getAllWeathersByPressure/{{pressure}}}}
+Accept: application/json
+
+
+### Returns all weathers by speed
+# @no-redirect
+GET http://localhost:8080/api/v1/getAllWeathersBySpeed/{{speed}}}}
+Accept: application/json
+
+
+### Returns weather by temperature
+# @no-redirect
+GET http://localhost:8080/api/v1/getWeatherByTemperature/{{temperature}}
+Accept: application/json
+
+### Returns weather by pressure
+# @no-redirect
+GET http://localhost:8080/api/v1/getWeatherByPressure/{{pressure}}}}
+Accept: application/json
+
+### Returns weather by speed
+# @no-redirect
+GET http://localhost:8080/api/v1/getWeatherBySpeed/{{speed}}
+Accept: application/json

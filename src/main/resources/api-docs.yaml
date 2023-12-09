@@ -1,0 +1,187 @@
+swagger: '2.0'
+basePath: /api/v1/
+host: localhost:8080
+info:
+  version: 1.0.0
+  title: Weather API
+  description: Endpoints documentation
+  contact:
+    email: alimthaicuk877@gmail.com
+    name: alim
+    url: https://github.com/javabak
+produces:
+  - application/json
+paths:
+
+  /weather/citiName/{cityName} :
+    parameters:
+      - name : cityName
+        in: path
+        required: true
+        type: string
+        description: unique meaning for weather search
+    get:
+      responses:
+        200 :
+          description: Returns the weather by city_name
+          schema:
+            $ref : '#/definitions/Weather'
+        404 :
+          description: Resource not found
+          schema:
+            default: {}
+
+  /weather/{id}:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        type: integer
+        description: unique meaning for weather search
+    get:
+      responses:
+        200 :
+          description: Returns a weather by id
+          schema:
+            $ref: '#/definitions/Weather'
+        404:
+          description: Resource not found
+          schema:
+            default: {}
+
+  /getAllWeathersByTemp/{temp} :
+    parameters:
+      - name : temp
+        in: path
+        required: true
+        type: string
+        description: required for weather search
+    get:
+      responses:
+        200 :
+          description: Returns all weathers by temp
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Weather'
+        404:
+          description: Resource not found
+          schema:
+            default: {}
+
+  /getAllWeathersByPressure/{pressure} :
+    parameters:
+      - name: pressure
+        in: path
+        required: true
+        type: string
+        description: required for weather search
+    get:
+      responses:
+        200:
+          description: Returns all weathers by pressure
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Weather'
+        404:
+          description: Resource not found
+          schema:
+            default: {}
+
+  /getAllWeathersBySpeed/{speed} :
+    parameters:
+      - name: speed
+        in: path
+        required: true
+        type: string
+        description: required for weather search
+    get:
+      responses:
+        200:
+          description: Returns all weathers by speed
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Weather'
+        404:
+          description: Resource not found
+          schema:
+            default: {}
+
+  /getWeatherBySpeed/{speed} :
+    parameters:
+      - name: speed
+        in: path
+        required: true
+        type: string
+        description: required for weather search
+    get:
+      responses:
+        200:
+          description: Returns a weather by speed
+          schema:
+            $ref: '#/definitions/Weather'
+        404:
+          description: Resource not found
+          schema:
+            default: {}
+
+  /getWeatherByPressure/{pressure} :
+    parameters:
+      - name: pressure
+        in: path
+        required: true
+        type: string
+        description: required for weather search
+    get:
+      responses:
+        200:
+          description: Returns a weather by pressure
+          schema:
+            $ref: '#/definitions/Weather'
+        404:
+          description: Resource not found
+          schema:
+            default: {}
+
+  /getWeatherByTemperature/{temperature} :
+    parameters:
+      - name: temperature
+        in: path
+        required: true
+        type: string
+        description: required for weather search
+    get:
+      responses:
+        200:
+          description: Returns a weather by temperature
+          schema:
+            $ref: '#/definitions/Weather'
+        404:
+          description: Resource not found
+          schema:
+            default: {}
+
+definitions:
+  Weather:
+    type: object
+    properties:
+      id:
+        type: integer
+        example: 1
+      temperature:
+        type: string
+        example: +5
+      cityName:
+        type: string
+        example: Москва
+      humidity :
+        type: string
+        example: 68%
+      pressure :
+        type: string
+        example: 760мм
+      speed :
+        type: string
+        example: 1 м/с
