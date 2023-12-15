@@ -48,8 +48,8 @@ public class ThymeleafController {
 
     @GetMapping("/getWeathersByHumidity")
     public String getWeathersByHumidity(@RequestParam String humidity, Model model) {
-        model.addAttribute("weathersByHumidity"
-                , weatherService.findByHumidity(humidity).stream().map(weatherDtoFactory::makeDto));
+        model.addAttribute("weathersByHumidity",
+                weatherService.findByHumidity(humidity).stream().map(weatherDtoFactory::makeDto));
         return "weathersByHumidity";
     }
 

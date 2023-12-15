@@ -2,8 +2,10 @@ package com.laborotoryproject.weather.parser.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.Hidden;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+import org.springframework.lang.Nullable;
 
 
 @Builder
@@ -14,23 +16,28 @@ import lombok.experimental.FieldDefaults;
 @Hidden
 public class WeatherDto {
 
-    @NonNull
+    @NotNull
+    @Nullable
     @JsonProperty("temperature")
     String temperature;
 
-    @NonNull
+    @NotNull
+    @Nullable
     @JsonProperty("city_name")
     String cityName;
 
-    @NonNull
+    @NotNull
+    @Nullable
     @JsonProperty("pressure")
     String pressure;
 
-    @NonNull
+    @NotNull
+    @Nullable
     @JsonProperty("humidity")
     String humidity;
 
-    @NonNull
+    @NotNull
+    @Nullable
     @JsonProperty("speed")
     String speed;
 }

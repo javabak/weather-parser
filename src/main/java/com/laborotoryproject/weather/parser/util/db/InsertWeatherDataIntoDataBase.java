@@ -20,16 +20,16 @@ public class InsertWeatherDataIntoDataBase {
     private static final String URL = "https://pogoda.mail.ru/country/russia/";
 
     WeatherService weatherService;
+    Document document;
 
     @Autowired
-    public InsertWeatherDataIntoDataBase(WeatherService weatherService) {
+    public InsertWeatherDataIntoDataBase(WeatherService weatherService) throws IOException {
         this.weatherService = weatherService;
+        document = Jsoup.connect(URL).get();
     }
 
     @PostConstruct
-    private void getWeather() throws IOException {
-        Document document = Jsoup.connect(URL).get();
-
+    private void getWeather() {
         Elements elements = document.getElementsByAttributeValue("class", "city-list__item");
 
         elements.forEach(element -> {
@@ -40,25 +40,28 @@ public class InsertWeatherDataIntoDataBase {
                 String pressure = element.getElementsByClass("city-list__val city-list__val-pressure").text();
                 String speed = element.getElementsByClass("city-list__val city-list__val-wind").text() + " м/с";
 
-                // подумать об инсерте pressure без мм
-                if (temp.startsWith("+")) {
-                    Weather weather = new Weather();
-                    weather.setCityName(city);
-                    weather.setTemperature(temp.substring(0, temp.length() - 1).replace("+", ""));
-                    weather.setHumidity(humidity);
-                    weather.setPressure(pressure);
-                    weather.setSpeed(speed);
-                    weatherService.save(weather);
-                } else {
-                    Weather weather = new Weather();
-                    weather.setCityName(city);
-                    weather.setTemperature(temp.substring(0, temp.length() - 1));
-                    weather.setHumidity(humidity);
-                    weather.setPressure(pressure);
-                    weather.setSpeed(speed);
-                    weatherService.save(weather);
-                }
+                extracted(city, temp, humidity, pressure, speed);
             }
         });
+    }
+
+    private void extracted(String city, String temp, String humidity, String pressure, String speed) {
+        if (temp.startsWith("+")) {
+            Weather weather = new Weather();
+            weather.setCityName(city);
+            weather.setTemperature(temp.substring(0, temp.length() - 1).replace("+", ""));
+            weather.setHumidity(humidity);
+            weather.setPressure(pressure);
+            weather.setSpeed(speed);
+            weatherService.save(weather);
+        } else {
+            Weather weather = new Weather();
+            weather.setCityName(city);
+            weather.setTemperature(temp.substring(0, temp.length() - 1));
+            weather.setHumidity(humidity);
+            weather.setPressure(pressure);
+            weather.setSpeed(speed);
+            weatherService.save(weather);
+        }
     }
 }

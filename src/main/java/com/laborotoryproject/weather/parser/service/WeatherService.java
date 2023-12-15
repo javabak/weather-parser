@@ -1,14 +1,13 @@
 package com.laborotoryproject.weather.parser.service;
 
-import com.laborotoryproject.weather.parser.exception.request_exceptions.CityNotFoundException;
-import com.laborotoryproject.weather.parser.exception.validate_exceptions.StringContainsDigitException;
-import com.laborotoryproject.weather.parser.exception.validate_exceptions.StringNotStartWithDigitException;
-import com.laborotoryproject.weather.parser.util.validate.ValidatingData;
 import com.laborotoryproject.weather.parser.entity.Weather;
+import com.laborotoryproject.weather.parser.exception.request_exceptions.CityNotFoundException;
 import com.laborotoryproject.weather.parser.exception.request_exceptions.WeatherWithIdNotFoundException;
 import com.laborotoryproject.weather.parser.exception.request_exceptions.WeatherWithPressureNotFoundException;
 import com.laborotoryproject.weather.parser.exception.request_exceptions.WeatherWithTemperatureNotFoundException;
+import com.laborotoryproject.weather.parser.exception.validate_exceptions.StringNotStartWithDigitException;
 import com.laborotoryproject.weather.parser.repository.WeatherRepository;
+import com.laborotoryproject.weather.parser.util.validate.ValidatingData;
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,11 +20,12 @@ import java.util.List;
 public class WeatherService {
 
     WeatherRepository weatherRepository;
-    ValidatingData validatingData = new ValidatingData();
+    ValidatingData validatingData;
 
     @Autowired
     public WeatherService(WeatherRepository weatherRepository) {
         this.weatherRepository = weatherRepository;
+        validatingData = new ValidatingData();
     }
 
     public Weather findWeatherByCityName(String citiName) {
@@ -34,7 +34,7 @@ public class WeatherService {
                     .findWeatherByCityName(citiName)
                     .orElseThrow(() -> new CityNotFoundException("city not found"));
         } else {
-            throw new StringContainsDigitException("string contains digit");
+            throw new StringNotStartWithDigitException("string contains digit");
         }
     }
 
@@ -50,13 +50,13 @@ public class WeatherService {
                     .findWeatherByTemperature(temperature)
                     .orElseThrow(() -> new WeatherWithTemperatureNotFoundException("weather with this temperature not found"));
         } else {
-            throw new StringNotStartWithDigitException("string not start with digit");
+            throw new StringNotStartWithDigitException("string does not start with '+' or '-'");
         }
     }
 
 
     public List<Weather> findByPressure(String pressure) {
-        if (validatingData.checkStringStartWithAndContainsDigit(pressure)) {
+        if (validatingData.checkStringStartWithDigitAndContainsLetter(pressure)) {
             return weatherRepository
                     .findWeatherByPressure(pressure)
                     .orElseThrow(() -> new WeatherWithPressureNotFoundException("weather with this pressure not found"));
@@ -66,7 +66,7 @@ public class WeatherService {
     }
 
     public List<Weather> findBySpeed(String speed) {
-        if (validatingData.checkStringStartWithAndContainsDigit(speed)) {
+        if (validatingData.checkStringStartWithDigitAndContainsLetter(speed)) {
             return weatherRepository
                     .findWeatherBySpeed(speed)
                     .orElseThrow(() -> new WeatherWithPressureNotFoundException("weather with this speed not found"));
@@ -79,16 +79,8 @@ public class WeatherService {
         weatherRepository.save(weather);
     }
 
-    public void deleteAll() {
-        weatherRepository.deleteAll();
-    }
-
-    public List<Weather> findAll() {
-        return weatherRepository.findAll();
-    }
-
     public List<Weather> findByHumidity(String humidity) {
-        if (validatingData.checkStringStartWithAndContainsDigit(humidity)) {
+        if (validatingData.checkStringStartWithDigitAndContainsLetter(humidity)) {
             return weatherRepository
                     .findWeatherByPressure(humidity)
                     .orElseThrow(() -> new WeatherWithPressureNotFoundException("weather with this humidity not found"));

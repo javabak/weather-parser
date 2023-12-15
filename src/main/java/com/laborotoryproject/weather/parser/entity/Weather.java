@@ -6,7 +6,8 @@ import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
-@Data
+@Getter
+@Setter
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @NoArgsConstructor
 @AllArgsConstructor
@@ -20,24 +21,19 @@ public class Weather {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     int id;
 
-    @NonNull
-    @Column(updatable = false, nullable = false, length = 20)
+    @Column(updatable = false, length = 20)
     String temperature;
 
-    @NonNull
     @JsonProperty("city_name")
-    @Column(updatable = false, nullable = false, length = 20)
+    @Column(updatable = false, length = 20)
     String cityName;
 
-    @NonNull
-    @Column(updatable = false, nullable = false, length = 20)
+    @Column(updatable = false, length = 20)
     String pressure;
 
-    @NonNull
-    @Column(updatable = false, nullable = false, length = 20)
+    @Column(updatable = false, length = 20)
     String humidity;
 
-    @NonNull
-    @Column(updatable = false, nullable = false, length = 20)
+    @Column(updatable = false, length = 20)
     String speed;
 }

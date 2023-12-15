@@ -1,17 +1,19 @@
 package com.laborotoryproject.weather.parser.security;
 
+import com.laborotoryproject.weather.parser.service.CustomUserDetailsService;
 import io.swagger.v3.oas.annotations.enums.SecuritySchemeType;
 import io.swagger.v3.oas.annotations.security.SecurityScheme;
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
@@ -20,15 +22,22 @@ import org.springframework.security.web.SecurityFilterChain;
         type = SecuritySchemeType.HTTP,
         bearerFormat = "basic authorization"
 )
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
+@RequiredArgsConstructor
 public class WebSecurityConfiguration {
 
+    CustomUserDetailsService userDetailsService;
+
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
-        return httpSecurity
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+
+        return http
                 .csrf((csrf -> {
                 }))
                 .httpBasic((httpBasic) -> {
                 })
+                .authenticationProvider(authenticationProvider())
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.ALWAYS))
                 .authorizeHttpRequests((authorizeRequests ->
                         authorizeRequests
                                 .requestMatchers(
@@ -39,7 +48,7 @@ public class WebSecurityConfiguration {
                                                                             "/swagger-ui.html", "/swagger-ui/**",
                                         "/v1/api-docs", "/v2/api-docs", "/v3/api-docs"
                                 )
-                                .permitAll()
+                                .hasRole("ADMIN")
                                 .anyRequest()
                                 .authenticated()
                 ))
@@ -52,13 +61,12 @@ public class WebSecurityConfiguration {
     }
 
     @Bean
-    public UserDetailsService userDetailsService() {
-        UserDetails userDetails = User
-                .builder()
-                .username("user")
-                .password(passwordEncoder().encode("pass"))
-                .build();
+    public DaoAuthenticationProvider authenticationProvider() {
+        DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
 
-        return new InMemoryUserDetailsManager(userDetails);
+        authProvider.setUserDetailsService(userDetailsService);
+        authProvider.setPasswordEncoder(passwordEncoder());
+
+        return authProvider;
     }
 }
