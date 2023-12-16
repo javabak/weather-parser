@@ -25,6 +25,14 @@ public class ThymeleafController {
         return "weather-by-id";
     }
 
+    @GetMapping("/getWeatherByCityName")
+    public String getWeatherByCityName(@RequestParam String cityName, Model model) {
+        model.addAttribute("weatherByCityName",
+                weatherDtoFactory.makeDto(weatherService.findWeatherByCityName(cityName)));
+        return "weatherByCityName";
+    }
+
+
     @GetMapping("/getWeathersByTemp")
     public String getWeathersByTemp(@RequestParam String temperature, Model model) {
         model.addAttribute("weathersByTemp",

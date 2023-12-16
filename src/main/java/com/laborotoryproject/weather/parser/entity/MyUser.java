@@ -1,10 +1,7 @@
 package com.laborotoryproject.weather.parser.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 
 @Getter
@@ -13,6 +10,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @Entity
 @Table(name = "user")
+@Builder
 public class MyUser {
 
     @Id
@@ -21,5 +19,7 @@ public class MyUser {
     private String login;
     private String password;
     private String position;
-    private String role;
+
+    @Enumerated(EnumType.STRING)
+    private Role role;
 }

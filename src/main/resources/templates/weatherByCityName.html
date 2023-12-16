@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Get Weather By Humidity</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+<form action="/getWeatherByCityName" method="get">
+  <div th:object="${weatherByCityName}">
+    <table class="table">
+      <thead>
+      <tr>
+        <th scope="col">CityName</th>
+        <th scope="col">Speed</th>
+        <th scope="col">Temperature</th>
+        <th scope="col">Humidity</th>
+        <th scope="col">Pressure</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr>
+        <th th:text="${weatherByCityName.cityName}"></th>
+        <td th:text="${weatherByCityName.speed}"></td>
+        <td th:text="${weatherByCityName.temperature}"></td>
+        <td th:text="${weatherByCityName.humidity}"></td>
+        <td th:text="${weatherByCityName.pressure}"></td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+</form>
+</body>
+</html>

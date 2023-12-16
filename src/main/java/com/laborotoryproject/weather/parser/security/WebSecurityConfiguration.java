@@ -1,5 +1,6 @@
 package com.laborotoryproject.weather.parser.security;
 
+import com.laborotoryproject.weather.parser.entity.Role;
 import com.laborotoryproject.weather.parser.service.CustomUserDetailsService;
 import io.swagger.v3.oas.annotations.enums.SecuritySchemeType;
 import io.swagger.v3.oas.annotations.security.SecurityScheme;
@@ -11,7 +12,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -34,21 +34,22 @@ public class WebSecurityConfiguration {
         return http
                 .csrf((csrf -> {
                 }))
+                .authenticationProvider(authenticationProvider())
                 .httpBasic((httpBasic) -> {
                 })
-                .authenticationProvider(authenticationProvider())
-                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.ALWAYS))
                 .authorizeHttpRequests((authorizeRequests ->
                         authorizeRequests
                                 .requestMatchers(
-                                        "/weather/citiName/{citiName}", "/weather/{id}",
-                                        "/getAllWeathersByTemp/{temp}", "/getAllWeathersByPressure/{pressure}",
-                                        "/getAllWeathersBySpeed/{speed}", "/getWeatherBySpeed/{speed}",
-                                        "/getWeatherByPressure/{pressure}", "/getWeatherByTemperature/{temperature}," +
-                                                                            "/swagger-ui.html", "/swagger-ui/**",
-                                        "/v1/api-docs", "/v2/api-docs", "/v3/api-docs"
+                        "api/v1/**",
+                        "/getWeatherByCityName", "/weather/id",
+                        "/getWeathersByTemp", "/getWeathersByPressure",
+                        "/getWeathersBySpeed", "/getWeatherBySpeed",
+                        "/getWeatherByPressure", "/getWeathersByHumidity" +
+                        "/getWeatherByHumidity", "/getWeatherByTemperature",
+                        "/swagger-ui.html", "/swagger-ui/**",
+                        "/v1/api-docs", "/v2/api-docs", "/v3/api-docs"
                                 )
-                                .hasRole("ADMIN")
+                                .hasRole(Role.ADMIN.name())
                                 .anyRequest()
                                 .authenticated()
                 ))
