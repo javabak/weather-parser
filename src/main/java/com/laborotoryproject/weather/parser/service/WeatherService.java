@@ -88,4 +88,10 @@ public class WeatherService {
             throw new StringNotStartWithDigitException("string not start with digit");
         }
     }
+
+    public void deleteWeatherById(long id) {
+        weatherRepository
+                .findById(id)
+                .ifPresent(weatherRepository::delete);
+    }
 }

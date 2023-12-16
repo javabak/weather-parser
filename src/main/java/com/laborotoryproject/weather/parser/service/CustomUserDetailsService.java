@@ -31,6 +31,7 @@ public class CustomUserDetailsService implements UserDetailsService {
                 .username(myUser.getLogin())
                 .password(passwordEncoder.encode(myUser.getPassword()))
                 .roles(myUser.getRole().name())
+                .authorities(myUser.getRole().getGrantedAuthorities())
                 .build();
     }
 }

@@ -13,10 +13,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -46,6 +43,7 @@ public class WeatherController {
     static final String GET_WEATHER_BY_SPEED = "/getWeatherBySpeed/{speed}";
     static final String GET_WEATHER_BY_PRESSURE = "/getWeatherByPressure/{pressure}";
     static final String GET_WEATHER_BY_TEMPERATURE = "/getWeatherByTemperature/{temperature}";
+    static final String DELETE_WEATHER_BY_ID = "/deleteWeatherById/{id}";
 
 
     @Autowired
@@ -143,5 +141,16 @@ public class WeatherController {
     public WeatherDto getWeatherByTemp(@PathVariable String temperature) {
         log.info("getting weather with temperature".concat(temperature));
         return weatherDtoFactory.makeDto(weatherService.findByTemperature(temperature).stream().findFirst().get());
+    }
+
+    @DeleteMapping(DELETE_WEATHER_BY_ID)
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "successfully delete the weather"),
+            @ApiResponse(responseCode = "404", description = "resource not found"),
+    })
+    @Operation(description = "delete weather by id")
+    public void deleteWeatherById(@PathVariable long id) {
+        log.info("deleting weather with id".concat(String.valueOf(id)));
+        weatherService.deleteWeatherById(id);
     }
 }
