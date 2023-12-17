@@ -18,6 +18,17 @@ public class ThymeleafController {
     WeatherService weatherService;
     WeatherDtoFactory weatherDtoFactory;
 
+    @GetMapping("/login")
+    public String login() {
+        return "login";
+    }
+
+    @GetMapping("/success")
+    public String success() {
+        return "success";
+    }
+
+
     @GetMapping("/weather/id")
     public String getWeatherById(@RequestParam long id, Model model) {
         model.addAttribute("weather",

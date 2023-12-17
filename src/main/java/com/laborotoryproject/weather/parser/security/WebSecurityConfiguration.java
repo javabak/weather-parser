@@ -16,8 +16,10 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
-import static com.laborotoryproject.weather.parser.entity.Permissions.WEATHER_DELETE;
+import java.util.concurrent.TimeUnit;
+
 import static com.laborotoryproject.weather.parser.entity.Role.ADMIN;
 
 @Configuration
@@ -36,33 +38,49 @@ public class WebSecurityConfiguration {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
         return http
-                .csrf((AbstractHttpConfigurer::disable))
+                .csrf(AbstractHttpConfigurer::disable)
                 .authenticationProvider(authenticationProvider())
                 .httpBasic((httpBasic) -> {
                 })
-//                .authorizeHttpRequests((authorizeRequests -> {
-//                    authorizeRequests
-//                            .requestMatchers(HttpMethod.DELETE, "api/v1/deleteWeatherById/{id}")
-//                            .hasAuthority(WEATHER_DELETE.getPermission());
-//                }))
                 .authorizeHttpRequests((authorizeRequests ->
                         authorizeRequests
                                 .requestMatchers(
-                        "api/v1/**",
-                        "/getWeatherByCityName", "/weather/id",
-                        "/getWeathersByTemp", "/getWeathersByPressure",
-                        "/getWeathersBySpeed", "/getWeatherBySpeed",
-                        "/getWeatherByPressure", "/getWeathersByHumidity" +
-                        "/getWeatherByHumidity", "/getWeatherByTemperature",
-                        "/swagger-ui.html", "/swagger-ui/**",
-                        "/v1/api-docs", "/v2/api-docs", "/v3/api-docs"
+                                        "api/v1/**",
+                                        "/getWeatherByCityName", "/weather/id",
+                                        "/getWeathersByTemp", "/getWeathersByPressure",
+                                        "/getWeathersBySpeed", "/getWeatherBySpeed",
+                                        "/getWeatherByPressure", "/getWeathersByHumidity" +
+                                                                 "/getWeatherByHumidity", "/getWeatherByTemperature",
+                                        "/swagger-ui.html", "/swagger-ui/**",
+                                        "/v1/api-docs", "/v2/api-docs", "/v3/api-docs"
                                 )
                                 .hasRole(ADMIN.name())
                                 .requestMatchers(HttpMethod.DELETE, "api/v1/deleteWeatherById/{id}")
-                                .hasAuthority(WEATHER_DELETE.getPermission())
+                                .hasAuthority(ADMIN.getGrantedAuthorities().toString())
                                 .anyRequest()
                                 .authenticated()
                 ))
+                .formLogin((formLogin) ->
+                        formLogin
+                                .loginPage("/login")
+                                .passwordParameter("password")
+                                .usernameParameter("username")
+                                .permitAll()
+                                .defaultSuccessUrl("/success", true))
+                .rememberMe((rememberMe) ->
+                        rememberMe
+                                .rememberMeParameter("remember-me")
+                                .tokenValiditySeconds((int) TimeUnit.DAYS.toSeconds(21))
+                                .key("somethingverysecured"))
+                .logout((logout) ->
+                        logout
+                                .logoutUrl("/logout")
+                                .logoutRequestMatcher(new AntPathRequestMatcher("/logout", "GET")) // if crsf is disabled
+                                .clearAuthentication(true)
+                                .invalidateHttpSession(true)
+                                .deleteCookies("remember-me", "JSESSIONID")
+                                .logoutSuccessUrl("/login")
+                )
                 .build();
     }
 

@@ -1,7 +1,7 @@
 package com.laborotoryproject.weather.parser.service;
 
+import com.laborotoryproject.weather.parser.dao.MyUserDao;
 import com.laborotoryproject.weather.parser.entity.MyUser;
-import com.laborotoryproject.weather.parser.repository.MyUserRepository;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -18,12 +18,12 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class CustomUserDetailsService implements UserDetailsService {
 
-    MyUserRepository userRepository;
+    MyUserDao myUserDao;
     PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
     @Override
     public UserDetails loadUserByUsername(String userName) throws UsernameNotFoundException {
-        MyUser myUser= userRepository.findByLogin(userName);
+        MyUser myUser= myUserDao.findByLogin(userName);
         if (myUser == null) {
             throw new UsernameNotFoundException("Unknown user: " + userName);
         }
