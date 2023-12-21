@@ -1,4 +1,4 @@
-package com.laborotoryproject.weather.parser.entity;
+package com.laborotoryproject.weather.parser.entity.enums;
 
 public enum Permissions {
     WEATHER_GET("get:weather"),

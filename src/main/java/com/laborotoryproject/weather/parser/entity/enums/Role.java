@@ -1,13 +1,14 @@
-package com.laborotoryproject.weather.parser.entity;
+package com.laborotoryproject.weather.parser.entity.enums;
 
 
+import com.laborotoryproject.weather.parser.entity.enums.Permissions;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static com.laborotoryproject.weather.parser.entity.Permissions.WEATHER_DELETE;
-import static com.laborotoryproject.weather.parser.entity.Permissions.WEATHER_GET;
+import static com.laborotoryproject.weather.parser.entity.enums.Permissions.WEATHER_DELETE;
+import static com.laborotoryproject.weather.parser.entity.enums.Permissions.WEATHER_GET;
 
 public enum Role {
     ADMIN(Set.of(WEATHER_DELETE, WEATHER_GET)),

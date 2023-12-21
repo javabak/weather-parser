@@ -1,5 +1,7 @@
 package com.laborotoryproject.weather.parser.entity;
 
+import com.laborotoryproject.weather.parser.entity.enums.Permissions;
+import com.laborotoryproject.weather.parser.entity.enums.Role;
 import jakarta.persistence.*;
 import lombok.*;
 

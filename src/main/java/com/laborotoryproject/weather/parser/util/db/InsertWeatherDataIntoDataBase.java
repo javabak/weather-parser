@@ -8,12 +8,14 @@ import lombok.experimental.FieldDefaults;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 
 @Component
+@EnableScheduling
 @FieldDefaults(makeFinal = true, level = AccessLevel.PRIVATE)
 public class InsertWeatherDataIntoDataBase {
 
@@ -22,13 +24,13 @@ public class InsertWeatherDataIntoDataBase {
     WeatherService weatherService;
     Document document;
 
-    @Autowired
     public InsertWeatherDataIntoDataBase(WeatherService weatherService) throws IOException {
         this.weatherService = weatherService;
         document = Jsoup.connect(URL).get();
     }
 
     @PostConstruct
+    @Scheduled(cron = "0 0 12 * * ?")
     private void getWeather() {
         Elements elements = document.getElementsByAttributeValue("class", "city-list__item");
 
