@@ -2,20 +2,22 @@ version: '3.3'
 services:
   mysql:
     image: mysql:latest
-    container_name: my-mysql-container
+    container_name: mysql-container
     environment:
-      MYSQL_ROOT_PASSWORD: Alimnikas299
-      MYSQL_DATABASE: weather_db
-      MYSQL_USERNAME: root
-      MYSQL_PASSWORD: Alimnikas299
+      MYSQL_ROOT_PASSWORD: ${DATABASE_PASSWORD}
+      MYSQL_DATABASE: ${DATABASE_NAME}
+      MYSQL_USERNAME: ${DATABASE_USERNAME}
+      MYSQL_PORT: ${DATABASE_PORT}
     ports:
       - "3307:3307"
     volumes:
       - ./mysql-data:/var/lib/mysql
+    env_file:
+      - .env
 
   java-app:
-    image: java-app-image
-    container_name: java-app-container
+    image: weather-parser:latest
+    container_name: weather-parser-container
     build:
       context: ./
       dockerfile: Dockerfile
@@ -24,6 +26,8 @@ services:
     ports:
       - "8080:8080"
     environment:
-      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/weather_db?allowPublicKeyRetrieval=true
-      - SPRING_DATASOURCE_USERNAME=root
-      - SPRING_DATASOURCE_PASSWORD=Alimnikas299
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql:${DATABASE_PORT}/${DATABASE_NAME}?allowPublicKeyRetrieval=true
+      - SPRING_DATASOURCE_USERNAME=${DATABASE_USERNAME}
+      - SPRING_DATASOURCE_PASSWORD=${DATABASE_PASSWORD}
+    env_file:
+      - .env
