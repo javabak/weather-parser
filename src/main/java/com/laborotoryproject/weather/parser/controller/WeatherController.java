@@ -9,7 +9,6 @@ import io.swagger.v3.oas.annotations.info.Info;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.AccessLevel;
-import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,9 +17,8 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @Slf4j
-@FieldDefaults(level = AccessLevel.PRIVATE)
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @RestController
-@RequiredArgsConstructor
 @RequestMapping("/api/v1/")
 @OpenAPIDefinition(
         info = @Info(
@@ -47,22 +45,12 @@ public class WeatherController {
 
 
     @Autowired
-    public WeatherController(WeatherService weatherService, WeatherDtoFactory weatherDtoFactory) {
+    public WeatherController(WeatherService weatherService,
+                             WeatherDtoFactory weatherDtoFactory) {
         this.weatherService = weatherService;
         this.weatherDtoFactory = weatherDtoFactory;
     }
 
-
-    @GetMapping(GET_WEATHER_BY_CITY_NAME)
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "successfully get the weather"),
-            @ApiResponse(responseCode = "404", description = "resource not found"),
-    })
-    @Operation(description = "get weather by city_name")
-    public WeatherDto getWeatherByCityName(@PathVariable String cityName) {
-        log.info("getting city ".concat(cityName));
-        return weatherDtoFactory.makeDto(weatherService.findWeatherByCityName(cityName));
-    }
 
     @GetMapping(GET_WEATHER_BY_ID)
     @ApiResponses(value = {
@@ -73,6 +61,17 @@ public class WeatherController {
     public WeatherDto getWeatherById(@PathVariable int id) {
         log.info("getting weather with id".concat(String.valueOf(id)));
         return weatherDtoFactory.makeDto(weatherService.findById(id));
+    }
+
+    @GetMapping(GET_WEATHER_BY_CITY_NAME)
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "successfully get the weather"),
+            @ApiResponse(responseCode = "404", description = "resource not found"),
+    })
+    @Operation(description = "get weather by city_name")
+    public WeatherDto getWeatherByCityName(@PathVariable String cityName) {
+        log.info("getting city ".concat(cityName));
+        return weatherDtoFactory.makeDto(weatherService.findWeatherByCityName(cityName));
     }
 
 
