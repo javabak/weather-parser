@@ -20,7 +20,8 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 import java.util.concurrent.TimeUnit;
 
-import static com.laborotoryproject.weather.parser.entity.Role.ADMIN;
+import static com.laborotoryproject.weather.parser.entity.enums.Role.ADMIN;
+
 
 @Configuration
 @EnableWebSecurity
