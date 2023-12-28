@@ -10,17 +10,19 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.session.DisableEncodeUrlFilter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 import java.util.concurrent.TimeUnit;
 
-import static com.laborotoryproject.weather.parser.entity.Role.ADMIN;
+import static com.laborotoryproject.weather.parser.entity.enums.Role.ADMIN;
 
 @Configuration
 @EnableWebSecurity
@@ -39,9 +41,9 @@ public class WebSecurityConfiguration {
 
         return http
                 .csrf(AbstractHttpConfigurer::disable)
+                .addFilterBefore(new DeniedClientFilter(), DisableEncodeUrlFilter.class) // for blocking requests starting with curl, but need to check if it is working
                 .authenticationProvider(authenticationProvider())
-                .httpBasic((httpBasic) -> {
-                })
+                .httpBasic(Customizer.withDefaults())
                 .authorizeHttpRequests((authorizeRequests ->
                         authorizeRequests
                                 .requestMatchers(
