@@ -2,8 +2,7 @@ package com.laborotoryproject.weatherparser.service;
 
 
 import com.laborotoryproject.weather.parser.entity.Weather;
-import com.laborotoryproject.weather.parser.exception.request_exceptions.WeatherWithIdNotFoundException;
-import com.laborotoryproject.weather.parser.exception.request_exceptions.WeatherWithTemperatureNotFoundException;
+import com.laborotoryproject.weather.parser.exception.request_exceptions.*;
 import com.laborotoryproject.weather.parser.repository.WeatherRepository;
 import com.laborotoryproject.weather.parser.service.WeatherService;
 import lombok.AccessLevel;
@@ -56,8 +55,8 @@ public class WeatherServiceTest {
 
     @Test
     public void findByTemperature_validTemperature_returnWeather() {
-        String temperature = "25.5 C";
-        Weather expectedWeather = new Weather(1, "London", "25.5 C", "1000 hPa", "10 m/s", "75%");
+        String temperature = "25.5";
+        Weather expectedWeather = new Weather(1, "25.5", "London", "1000 мм", "10 м/с", "75%");
         when(weatherRepository.findWeatherByTemperature(temperature))
                 .thenReturn(Optional.of(Collections.singletonList(expectedWeather)));
 
@@ -70,7 +69,7 @@ public class WeatherServiceTest {
 
     @Test
     public void findByTemperature_invalidTemperature_throwStringNotStartWithDigitException() {
-        String temperature = "25C";
+        String temperature = "25.5";
         when(weatherRepository.findWeatherByTemperature(temperature))
                 .thenReturn(Optional.empty());
 
@@ -79,6 +78,86 @@ public class WeatherServiceTest {
         verify(weatherRepository, times(1))
                 .findWeatherByTemperature(temperature);
     }
+
+    @Test
+    public void findByPressure_validPressure_returnWeather() {
+        String pressure = "1000 мм";
+        Weather expectedWeather = new Weather(1, "25.5", "London", "1000 мм", "10 м/с", "75%");
+        when(weatherRepository.findWeatherByPressure(pressure))
+                .thenReturn(Optional.of(Collections.singletonList(expectedWeather)));
+
+        Weather actualWeather = weatherService.findByPressure(pressure).stream().findFirst().get();
+
+        assertEquals(expectedWeather, actualWeather);
+        verify(weatherRepository, times(1))
+                .findWeatherByPressure(pressure);
+    }
+
+    @Test
+    public void findByPressure_invalidPressure_throwStringNotStartWithDigitException() {
+        String pressure = "1000 мм";
+        when(weatherRepository.findWeatherByPressure(pressure))
+                .thenReturn(Optional.empty());
+
+        assertThrows(WeatherWithPressureNotFoundException.class,
+                () -> weatherService.findByPressure(pressure));
+        verify(weatherRepository, times(1))
+                .findWeatherByPressure(pressure);
+    }
+
+
+    @Test
+    public void findBySpeed_validSpeed_returnWeather() {
+        String speed = "10 м/с";
+        Weather expectedWeather = new Weather(1, "25.5", "London", "1000 мм", "10 м/с", "75%");
+        when(weatherRepository.findWeatherBySpeed(speed))
+                .thenReturn(Optional.of(Collections.singletonList(expectedWeather)));
+
+        Weather actualWeather = weatherService.findBySpeed(speed).stream().findFirst().get();
+
+        assertEquals(expectedWeather, actualWeather);
+        verify(weatherRepository, times(1))
+                .findWeatherBySpeed(speed);
+    }
+
+    @Test
+    public void findBySpeed_invalidSpeed_throwStringNotStartWithDigitException() {
+        String speed = "10 м/с";
+        when(weatherRepository.findWeatherBySpeed(speed))
+                .thenReturn(Optional.empty());
+
+        assertThrows(WeatherWithSpeedNotFoundException.class,
+                () -> weatherService.findBySpeed(speed));
+        verify(weatherRepository, times(1))
+                .findWeatherBySpeed(speed);
+    }
+
+    @Test
+    public void findByHumidity_validHumidity_returnWeather() {
+        String humidity = "75%";
+        Weather expectedWeather = new Weather(1, "25.5", "London", "1000 мм", "10 м/с", "75%");
+        when(weatherRepository.findWeatherByHumidity(humidity))
+                .thenReturn(Optional.of(Collections.singletonList(expectedWeather)));
+
+        Weather actualWeather = weatherService.findByHumidity(humidity).stream().findFirst().get();
+
+        assertEquals(expectedWeather, actualWeather);
+        verify(weatherRepository, times(1))
+                .findWeatherByHumidity(humidity);
+    }
+
+    @Test
+    public void findByHumidity_invalidHumidity_throwStringNotStartWithDigitException() {
+        String speed = "75%";
+        when(weatherRepository.findWeatherByHumidity(speed))
+                .thenReturn(Optional.empty());
+
+        assertThrows(WeatherWithHumidityNotFoundException.class,
+                () -> weatherService.findByHumidity(speed));
+        verify(weatherRepository, times(1))
+                .findWeatherByHumidity(speed);
+    }
+
 
     @Test
     public void deleteWeatherById_whenIdExists_shouldDeleteWeather() {
