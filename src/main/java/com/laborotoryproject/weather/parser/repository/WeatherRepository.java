@@ -15,6 +15,7 @@ public interface WeatherRepository extends JpaRepository<Weather, Long> {
     Optional<List<Weather>> findWeatherByTemperature(String temperature);
     Optional<List<Weather>> findWeatherByPressure(String pressure);
     Optional<List<Weather>> findWeatherBySpeed(String speed);
+    Optional<List<Weather>> findWeatherByHumidity(String humidity);
 
     List<Weather> findByTemperature(String temp);
 }

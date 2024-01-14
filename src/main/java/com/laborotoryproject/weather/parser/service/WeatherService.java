@@ -1,10 +1,7 @@
 package com.laborotoryproject.weather.parser.service;
 
 import com.laborotoryproject.weather.parser.entity.Weather;
-import com.laborotoryproject.weather.parser.exception.request_exceptions.CityNotFoundException;
-import com.laborotoryproject.weather.parser.exception.request_exceptions.WeatherWithIdNotFoundException;
-import com.laborotoryproject.weather.parser.exception.request_exceptions.WeatherWithPressureNotFoundException;
-import com.laborotoryproject.weather.parser.exception.request_exceptions.WeatherWithTemperatureNotFoundException;
+import com.laborotoryproject.weather.parser.exception.request_exceptions.*;
 import com.laborotoryproject.weather.parser.exception.validate_exceptions.StringNotStartWithDigitException;
 import com.laborotoryproject.weather.parser.repository.WeatherRepository;
 import com.laborotoryproject.weather.parser.util.validate.ValidatingData;
@@ -69,7 +66,17 @@ public class WeatherService {
         if (validatingData.checkStringStartWithDigitAndContainsLetter(speed)) {
             return weatherRepository
                     .findWeatherBySpeed(speed)
-                    .orElseThrow(() -> new WeatherWithPressureNotFoundException("weather with this speed not found"));
+                    .orElseThrow(() -> new WeatherWithSpeedNotFoundException("weather with this speed not found"));
+        } else {
+            throw new StringNotStartWithDigitException("string not start with digit");
+        }
+    }
+
+    public List<Weather> findByHumidity(String humidity) {
+        if (validatingData.checkStringStartWithDigitAndContainsLetter(humidity)) {
+            return weatherRepository
+                    .findWeatherByHumidity(humidity)
+                    .orElseThrow(() -> new WeatherWithHumidityNotFoundException("weather with this humidity not found"));
         } else {
             throw new StringNotStartWithDigitException("string not start with digit");
         }
@@ -77,16 +84,6 @@ public class WeatherService {
 
     public void save(Weather weather) {
         weatherRepository.save(weather);
-    }
-
-    public List<Weather> findByHumidity(String humidity) {
-        if (validatingData.checkStringStartWithDigitAndContainsLetter(humidity)) {
-            return weatherRepository
-                    .findWeatherByPressure(humidity)
-                    .orElseThrow(() -> new WeatherWithPressureNotFoundException("weather with this humidity not found"));
-        } else {
-            throw new StringNotStartWithDigitException("string not start with digit");
-        }
     }
 
     public void deleteWeatherById(long id) {
