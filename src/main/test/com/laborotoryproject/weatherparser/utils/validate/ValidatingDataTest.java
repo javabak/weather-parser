@@ -1,5 +1,6 @@
 package com.laborotoryproject.weatherparser.utils.validate;
 
+import com.laborotoryproject.weather.parser.util.validate.ValidatingData;
 import org.junit.jupiter.api.Test;
 
 import java.util.regex.Pattern;
@@ -10,63 +11,22 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class ValidatingDataTest {
 
     @Test
-    public void testCheckTemperatureInput_1() {
-        String regex = "^-?\\d+(\\.\\d+)?";
-        Pattern pattern = Pattern.compile(regex);
+    public void testCheckTemperatureInput() {
+        ValidatingData temperatureValidator = new ValidatingData();
 
-        boolean b = pattern.matcher("12").matches();
+        // Valid Inputs
+        assertTrue(temperatureValidator.checkTemperatureInput("25"));
+        assertTrue(temperatureValidator.checkTemperatureInput("-10"));
+        assertTrue(temperatureValidator.checkTemperatureInput("0"));
+        assertTrue(temperatureValidator.checkTemperatureInput("12.5"));
+        assertTrue(temperatureValidator.checkTemperatureInput("-3.75"));
 
-        assertTrue(b);
-    }
-
-    @Test
-    public void testCheckTemperatureInput_2() {
-        String regex = "^-?\\d+(\\.\\d+)?";
-        Pattern pattern = Pattern.compile(regex);
-
-        boolean b = pattern.matcher("abc").matches();
-
-        assertFalse(b);
-    }
-
-    @Test
-    public void testCheckTemperatureInput_3() {
-        String regex = "^-?\\d+(\\.\\d+)?";
-        Pattern pattern = Pattern.compile(regex);
-
-        boolean b = pattern.matcher("-12").matches();
-
-        assertTrue(b);
-    }
-
-    @Test
-    public void testCheckTemperatureInput_4() {
-        String regex = "^-?\\d+(\\.\\d+)?";
-        Pattern pattern = Pattern.compile(regex);
-
-        boolean b = pattern.matcher("-abc").matches();
-
-        assertFalse(b);
-    }
-
-    @Test
-    public void testCheckTemperatureInput_5() {
-        String regex = "^-?\\d+(\\.\\d+)?";
-        Pattern pattern = Pattern.compile(regex);
-
-        boolean b = pattern.matcher("0").matches();
-
-        assertTrue(b);
-    }
-
-    @Test
-    public void testCheckTemperatureInput_6() {
-        String regex = "^-?\\d+(\\.\\d+)?";
-        Pattern pattern = Pattern.compile(regex);
-
-        boolean b = pattern.matcher("0asd").matches();
-
-        assertFalse(b);
+        // Invalid inputs
+        assertFalse(temperatureValidator.checkTemperatureInput("abc"));
+        assertFalse(temperatureValidator.checkTemperatureInput("1a"));
+        assertFalse(temperatureValidator.checkTemperatureInput(""));
+        assertFalse(temperatureValidator.checkTemperatureInput("0.0.0"));
+        assertFalse(temperatureValidator.checkTemperatureInput("-"));
     }
 
     @Test
