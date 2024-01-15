@@ -4,22 +4,23 @@ import java.util.regex.Pattern;
 
 public class ValidatingData {
 
-
     public boolean checkTemperatureInput(String string) {
         String regex = "\\d+";
         Pattern pattern = Pattern.compile(regex);
-        return pattern.matcher(string).find() || string.startsWith("-") || string.startsWith("0");
+        return pattern.matcher(string).matches()
+               || (string.startsWith("-") && pattern.matcher(string).matches())
+               || (string.startsWith("0") && pattern.matcher(string).matches());
     }
 
     public boolean checkStringNotContainsDigit(String string) {
-        String regex = "[0-9]+";
+        String regex = "^[^\\d]*$";
         Pattern pattern = Pattern.compile(regex);
-        return !pattern.matcher(string.trim()).find();
+        return pattern.matcher(string.trim()).find();
     }
 
     public boolean checkStringStartWithDigitAndContainsLetter(String string) {
-        String regex = "^[0-9]+";
+        String regex = "^\\d.*[a-zA-Z]";
         Pattern pattern = Pattern.compile(regex);
-        return pattern.matcher(string.trim()).find();
+        return pattern.matcher(string.trim()).matches();
     }
 }
