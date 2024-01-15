@@ -47,7 +47,7 @@ public class WeatherService {
                     .findWeatherByTemperature(temperature)
                     .orElseThrow(() -> new WeatherWithTemperatureNotFoundException("weather with this temperature not found"));
         } else {
-            throw new StringNotStartWithDigitException("string does not start with '+' or '-'");
+            throw new StringNotStartWithDigitException("string contains letter");
         }
     }
 
@@ -58,7 +58,7 @@ public class WeatherService {
                     .findWeatherByPressure(pressure)
                     .orElseThrow(() -> new WeatherWithPressureNotFoundException("weather with this pressure not found"));
         } else {
-            throw new StringNotStartWithDigitException("string not start with digit");
+            throw new StringNotStartWithDigitException("string not start with digit or don't contains letter");
         }
     }
 
@@ -68,7 +68,7 @@ public class WeatherService {
                     .findWeatherBySpeed(speed)
                     .orElseThrow(() -> new WeatherWithSpeedNotFoundException("weather with this speed not found"));
         } else {
-            throw new StringNotStartWithDigitException("string not start with digit");
+            throw new StringNotStartWithDigitException("string not start with digit or don't contains letter");
         }
     }
 
@@ -78,7 +78,7 @@ public class WeatherService {
                     .findWeatherByHumidity(humidity)
                     .orElseThrow(() -> new WeatherWithHumidityNotFoundException("weather with this humidity not found"));
         } else {
-            throw new StringNotStartWithDigitException("string not start with digit");
+            throw new StringNotStartWithDigitException("string not start with digit or don't contains letter");
         }
     }
 
