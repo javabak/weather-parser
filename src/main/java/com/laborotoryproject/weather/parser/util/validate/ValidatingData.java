@@ -21,6 +21,6 @@ public class ValidatingData {
     public boolean checkStringStartWithDigitAndContainsLetter(String string) {
         String regex = "^\\d.*[a-zA-Zа-яА-Я]";
         Pattern pattern = Pattern.compile(regex);
-        return pattern.matcher(string.trim()).matches();
+        return pattern.matcher(string.trim()).find();
     }
 }
