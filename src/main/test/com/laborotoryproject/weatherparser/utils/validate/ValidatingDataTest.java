@@ -10,58 +10,44 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ValidatingDataTest {
 
+    ValidatingData validatingData = new ValidatingData();
+
     @Test
     public void testCheckTemperatureInput() {
-        ValidatingData temperatureValidator = new ValidatingData();
 
         // Valid Inputs
-        assertTrue(temperatureValidator.checkTemperatureInput("25"));
-        assertTrue(temperatureValidator.checkTemperatureInput("-10"));
-        assertTrue(temperatureValidator.checkTemperatureInput("0"));
-        assertTrue(temperatureValidator.checkTemperatureInput("12.5"));
-        assertTrue(temperatureValidator.checkTemperatureInput("-3.75"));
+        assertTrue(validatingData.checkTemperatureInput("25"));
+        assertTrue(validatingData.checkTemperatureInput("-10"));
+        assertTrue(validatingData.checkTemperatureInput("0"));
+        assertTrue(validatingData.checkTemperatureInput("12.5"));
+        assertTrue(validatingData.checkTemperatureInput("-3.75"));
 
         // Invalid inputs
-        assertFalse(temperatureValidator.checkTemperatureInput("abc"));
-        assertFalse(temperatureValidator.checkTemperatureInput("1a"));
-        assertFalse(temperatureValidator.checkTemperatureInput(""));
-        assertFalse(temperatureValidator.checkTemperatureInput("0.0.0"));
-        assertFalse(temperatureValidator.checkTemperatureInput("-"));
+        assertFalse(validatingData.checkTemperatureInput("abc"));
+        assertFalse(validatingData.checkTemperatureInput("1a"));
+        assertFalse(validatingData.checkTemperatureInput(""));
+        assertFalse(validatingData.checkTemperatureInput("0.0.0"));
+        assertFalse(validatingData.checkTemperatureInput("-"));
     }
 
     @Test
-    public void testCheckStringNotContainsDigit_WithValidData() {
-        String regex = "^[^\\d]*$";
-        Pattern pattern = Pattern.compile(regex);
-        boolean b = pattern.matcher("abc".trim()).find();
+    public void testCheckStringNotContainsDigit() {
+        assertTrue(validatingData.checkStringNotContainsDigit("abc"));
 
-        assertTrue(b);
+        assertFalse(validatingData.checkStringNotContainsDigit("23asd"));
     }
 
     @Test
-    public void testCheckStringNotContainsDigit_WithInvalidData() {
-        String regex = "^[^\\d]*$";
-        Pattern pattern = Pattern.compile(regex);
-        boolean b = pattern.matcher("k123jh".trim()).find();
+    public void testCheckStringStartWithDigitAndContainsLetter() {
+        assertTrue(validatingData.checkStringStartWithDigitAndContainsLetter("123 dad"));
 
-        assertFalse(b);
+        assertFalse(validatingData.checkStringStartWithDigitAndContainsLetter("123"));
     }
 
     @Test
-    public void testCheckStringStartWithDigitAndContainsLetter_WithValidData() {
-        String regex = "^\\d.*[a-zA-Z]";
-        Pattern pattern = Pattern.compile(regex);
-        boolean b = pattern.matcher("123asd".trim()).matches();
+    public void testCheckStringForHumidity() {
+        assertTrue(validatingData.checkStringForHumidity("53%"));
 
-        assertTrue(b);
-    }
-
-    @Test
-    public void testCheckStringStartWithDigitAndContainsLetter_WithInvalidData() {
-        String regex = "^\\d.*[a-zA-Z]";
-        Pattern pattern = Pattern.compile(regex);
-        boolean b = pattern.matcher("asd".trim()).matches();
-
-        assertFalse(b);
+        assertFalse(validatingData.checkStringForHumidity("21"));
     }
 }
