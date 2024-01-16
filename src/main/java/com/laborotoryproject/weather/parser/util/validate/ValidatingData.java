@@ -29,4 +29,10 @@ public class ValidatingData {
         Pattern pattern = Pattern.compile(regex);
         return pattern.matcher(string.trim()).matches();
     }
+
+    public boolean checkId(String string) {
+        String regex = "^\\d+$";
+        Pattern pattern = Pattern.compile(regex);
+        return pattern.matcher(string.trim()).matches();
+    }
 }
