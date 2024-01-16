@@ -3,8 +3,6 @@ package com.laborotoryproject.weatherparser.utils.validate;
 import com.laborotoryproject.weather.parser.util.validate.ValidatingData;
 import org.junit.jupiter.api.Test;
 
-import java.util.regex.Pattern;
-
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -49,5 +47,12 @@ public class ValidatingDataTest {
         assertTrue(validatingData.checkStringForHumidity("53%"));
 
         assertFalse(validatingData.checkStringForHumidity("21"));
+    }
+
+    @Test
+    public void testCheckId() {
+        assertTrue(validatingData.checkId("13"));
+
+        assertFalse(validatingData.checkId("asd123"));
     }
 }
