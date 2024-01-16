@@ -40,7 +40,7 @@ public class InsertWeatherDataIntoDataBase {
                 String temp = element.getElementsByClass("city-list__val city-list__val-temperature").text();
                 String humidity = element.getElementsByClass("city-list__val city-list__val-humidity").text();
                 String pressure = element.getElementsByClass("city-list__val city-list__val-pressure").text();
-                String speed = element.getElementsByClass("city-list__val city-list__val-wind").text() + " м/с";
+                String speed = element.getElementsByClass("city-list__val city-list__val-wind").text() + " мс";
 
                 extracted(city, temp, humidity, pressure, speed);
             }
