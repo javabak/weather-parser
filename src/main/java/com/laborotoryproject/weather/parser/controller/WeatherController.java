@@ -35,15 +35,17 @@ public class WeatherController {
     WeatherService weatherService;
     WeatherDtoFactory weatherDtoFactory;
 
-    static final String GET_WEATHER_BY_CITY_NAME = "/weather/cityName/{cityName}";
-    static final String GET_WEATHER_BY_ID = "/weather/{id}";
+    static final String GET_ALL_WEATHERS_BY_HUMIDITY = "/getAllWeathersByHumidity/{humidity}";
     static final String GET_ALL_WEATHERS_BY_TEMPERATURE = "/getAllWeathersByTemp/{temp}";
     static final String GET_ALL_WEATHERS_BY_PRESSURE = "/getAllWeathersByPressure/{pressure}";
     static final String GET_ALL_WEATHERS_BY_SPEED = "/getAllWeathersBySpeed/{speed}";
+    static final String GET_WEATHER_BY_HUMIDITY = "/getWeatherByHumidity/{humidity}";
+    static final String GET_WEATHER_BY_CITY_NAME = "/weather/cityName/{cityName}";
     static final String GET_WEATHER_BY_SPEED = "/getWeatherBySpeed/{speed}";
     static final String GET_WEATHER_BY_PRESSURE = "/getWeatherByPressure/{pressure}";
     static final String GET_WEATHER_BY_TEMPERATURE = "/getWeatherByTemperature/{temperature}";
     static final String DELETE_WEATHER_BY_ID = "/deleteWeatherById/{id}";
+    static final String GET_WEATHER_BY_ID = "/weather/{id}";
 
 
     @Autowired
@@ -85,7 +87,18 @@ public class WeatherController {
     @Operation(description = "get all weathers by temperature")
     public ResponseEntity<List<WeatherDto>> getAllWeathersByTemperature(@PathVariable String temp) {
         log.info("getting all weathers with temperature".concat(temp));
-        return ResponseEntity.ok(weatherService.findByTemperature(temp).stream().map(weatherDtoFactory::makeDto).toList());
+        return ResponseEntity.ok(weatherDtoFactory.makeListDto(weatherService.findAllWeathersByTemperature(temp)));
+    }
+
+    @GetMapping(GET_ALL_WEATHERS_BY_HUMIDITY)
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "successfully get all possible the weathers"),
+            @ApiResponse(responseCode = "404", description = "resource not found"),
+    })
+    @Operation(description = "get all weathers by temperature")
+    public ResponseEntity<List<WeatherDto>> getAllWeathersByHumidity(@PathVariable String humidity) {
+        log.info("getting all weathers with temperature".concat(humidity));
+        return ResponseEntity.ok(weatherDtoFactory.makeListDto(weatherService.findAllWeathersByHumidity(humidity)));
     }
 
     @GetMapping(GET_ALL_WEATHERS_BY_PRESSURE)
@@ -96,7 +109,7 @@ public class WeatherController {
     @Operation(description = "get all weathers by pressure")
     public ResponseEntity<List<WeatherDto>> getAllWeathersByPressure(@PathVariable String pressure) {
         log.info("getting all weathers with pressure".concat(pressure));
-        return ResponseEntity.ok(weatherService.findByPressure(pressure).stream().map(weatherDtoFactory::makeDto).toList());
+        return ResponseEntity.ok(weatherDtoFactory.makeListDto(weatherService.findAllWeathersByPressure(pressure)));
     }
 
     @GetMapping(GET_ALL_WEATHERS_BY_SPEED)
@@ -107,7 +120,7 @@ public class WeatherController {
     @Operation(description = "get all weathers by speed")
     public ResponseEntity<List<WeatherDto>> getAllWeathersBySpeed(@PathVariable String speed) {
         log.info("getting all weathers with speed".concat(speed));
-        return ResponseEntity.ok(weatherService.findBySpeed(speed).stream().map(weatherDtoFactory::makeDto).toList());
+        return ResponseEntity.ok(weatherDtoFactory.makeListDto(weatherService.findAllWeathersBySpeed(speed)));
     }
 
 
@@ -119,7 +132,18 @@ public class WeatherController {
     @Operation(description = "get weather by speed")
     public ResponseEntity<WeatherDto> getWeatherBySpeed(@PathVariable String speed) {
         log.info("getting weather with speed".concat(speed));
-        return ResponseEntity.ok(weatherDtoFactory.makeDto(weatherService.findBySpeed(speed).stream().findFirst().get()));
+        return ResponseEntity.ok(weatherDtoFactory.makeDto(weatherService.findAllWeathersBySpeed(speed).stream().findFirst().get()));
+    }
+
+    @GetMapping(GET_WEATHER_BY_HUMIDITY)
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "successfully get the weather"),
+            @ApiResponse(responseCode = "404", description = "resource not found"),
+    })
+    @Operation(description = "get weather by speed")
+    public ResponseEntity<WeatherDto> getWeatherByHumidity(@PathVariable String humidity) {
+        log.info("getting weather with speed".concat(humidity));
+        return ResponseEntity.ok(weatherDtoFactory.makeDto(weatherService.findAllWeathersByHumidity(humidity).stream().findFirst().get()));
     }
 
 
@@ -131,7 +155,7 @@ public class WeatherController {
     @Operation(description = "get weather by pressure")
     public ResponseEntity<WeatherDto> getWeatherByPressure(@PathVariable String pressure) {
         log.info("getting weather with pressure".concat(pressure));
-        return ResponseEntity.ok(weatherDtoFactory.makeDto(weatherService.findByPressure(pressure).stream().findFirst().get()));
+        return ResponseEntity.ok(weatherDtoFactory.makeDto(weatherService.findAllWeathersByPressure(pressure).stream().findFirst().get()));
     }
 
     @GetMapping(GET_WEATHER_BY_TEMPERATURE)
@@ -142,7 +166,7 @@ public class WeatherController {
     @Operation(description = "get weather by temperature")
     public ResponseEntity<WeatherDto> getWeatherByTemp(@PathVariable String temperature) {
         log.info("getting weather with temperature".concat(temperature));
-        return ResponseEntity.ok(weatherDtoFactory.makeDto(weatherService.findByTemperature(temperature).stream().findFirst().get()));
+        return ResponseEntity.ok(weatherDtoFactory.makeDto(weatherService.findAllWeathersByTemperature(temperature).stream().findFirst().get()));
     }
 
 
