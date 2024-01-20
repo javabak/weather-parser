@@ -42,7 +42,7 @@ public class InsertWeatherDataIntoDataBase {
                 String pressure = element.getElementsByClass("city-list__val city-list__val-pressure").text();
                 String speed = element.getElementsByClass("city-list__val city-list__val-wind").text() + " мс";
 
-                extracted(city, temp, humidity, pressure, speed);
+                extracted(city, temp, humidity.substring(0, humidity.indexOf('%')), pressure, speed);
             }
         });
     }
