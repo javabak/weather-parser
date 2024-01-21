@@ -1,7 +1,6 @@
 package com.laborotoryproject.weather.parser.entity.enums;
 
 
-import com.laborotoryproject.weather.parser.entity.enums.Permissions;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 import java.util.Set;
