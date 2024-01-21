@@ -3,6 +3,7 @@ package com.laborotoryproject.weatherparser.service;
 
 import com.laborotoryproject.weather.parser.entity.Weather;
 import com.laborotoryproject.weather.parser.exception.request_exceptions.WeatherNotFound;
+import com.laborotoryproject.weather.parser.exception.validate_exceptions.StringNotStartWithDigitException;
 import com.laborotoryproject.weather.parser.repository.WeatherRepository;
 import com.laborotoryproject.weather.parser.service.WeatherService;
 import lombok.AccessLevel;
@@ -34,7 +35,7 @@ public class WeatherServiceTest {
     WeatherService weatherService;
 
     @Test
-    public void findById_whenIdExists_shouldReturnWeather() {
+    public void testFindById_whenIdExist() {
         Weather weather = mock(Weather.class);
         weather.setId(1);
         when(weatherRepository.findById(1L)).thenReturn(Optional.of(weather));
@@ -46,29 +47,29 @@ public class WeatherServiceTest {
     }
 
     @Test
-    public void findById_whenIdDoesNotExist_shouldThrowWeatherWithIdNotFoundException() {
+    public void testFindById_whenIdDoesNotExist() {
         when(weatherRepository.findById(1L)).thenReturn(Optional.empty());
 
         assertThrows(WeatherNotFound.class, () -> weatherService.findById(1L));
         verify(weatherRepository, times(1)).findById(1L);
     }
 
+
     @Test
-    public void findByTemperature_validTemperature_returnWeather() {
+    public void testFindByTemperature_whenTemperatureExist() {
         String temperature = "25";
-        Weather expectedWeather = new Weather(1, temperature, "London", "1000 мм", "65", "75 мс");
+        Weather expectedWeather = new Weather();
         when(weatherRepository.findAllWeathersByTemperature(temperature))
                 .thenReturn(Optional.of(Collections.singletonList(expectedWeather)));
 
         Weather actualWeather = weatherService.findAllWeathersByTemperature(temperature).stream().findFirst().get();
 
         assertEquals(expectedWeather, actualWeather);
-        verify(weatherRepository, times(1))
-                .findAllWeathersByTemperature(temperature);
+        verify(weatherRepository, times(1)).findAllWeathersByTemperature(temperature);
     }
 
     @Test
-    public void findByTemperature_invalidTemperature_throwStringNotStartWithDigitException() {
+    public void testFindByTemperature_whenTemperatureDoesNotExist() {
         String temperature = "25";
         when(weatherRepository.findAllWeathersByTemperature(temperature))
                 .thenReturn(Optional.empty());
@@ -80,9 +81,9 @@ public class WeatherServiceTest {
     }
 
     @Test
-    public void findByPressure_validPressure_returnWeather() {
+    public void testFindByPressure_whenPressureExist() {
         String pressure = "1000 мм";
-        Weather expectedWeather = new Weather(1, "12", "London", pressure, "65", "75 мс");
+        Weather expectedWeather = new Weather();
         when(weatherRepository.findAllWeathersByPressure(pressure))
                 .thenReturn(Optional.of(Collections.singletonList(expectedWeather)));
 
@@ -94,7 +95,7 @@ public class WeatherServiceTest {
     }
 
     @Test
-    public void findByPressure_invalidPressure_throwStringNotStartWithDigitException() {
+    public void testFindByPressure_whenPressureDoesNotExist() {
         String pressure = "1000 мм";
         when(weatherRepository.findAllWeathersByPressure(pressure))
                 .thenReturn(Optional.empty());
@@ -107,9 +108,9 @@ public class WeatherServiceTest {
 
 
     @Test
-    public void findBySpeed_validSpeed_returnWeather() {
+    public void testFindBySpeed_whenSpeedExist() {
         String speed = "10 мс";
-        Weather expectedWeather = new Weather(1, "25", "London", "1000 мм", "65", speed);
+        Weather expectedWeather = new Weather();
         when(weatherRepository.findAllWeathersBySpeed(speed))
                 .thenReturn(Optional.of(Collections.singletonList(expectedWeather)));
 
@@ -121,7 +122,7 @@ public class WeatherServiceTest {
     }
 
     @Test
-    public void findBySpeed_invalidSpeed_throwStringNotStartWithDigitException() {
+    public void testFindBySpeed_whenSpeedDoesNotExist() {
         String speed = "10 мс";
         when(weatherRepository.findAllWeathersBySpeed(speed))
                 .thenReturn(Optional.empty());
@@ -133,9 +134,9 @@ public class WeatherServiceTest {
     }
 
     @Test
-    public void findByHumidity_validHumidity_returnWeather() {
+    public void testFindByHumidity_whenHumidityExist() {
         String humidity = "65";
-        Weather expectedWeather = new Weather(1, "12", "London", "1000 мм", humidity, "75 мс");
+        Weather expectedWeather = new Weather();
         when(weatherRepository.findAllWeathersByHumidity(humidity))
                 .thenReturn(Optional.of(Collections.singletonList(expectedWeather)));
 
@@ -147,7 +148,7 @@ public class WeatherServiceTest {
     }
 
     @Test
-    public void findByHumidity_invalidHumidity_throwStringNotStartWithDigitException() {
+    public void testFindByHumidity_whenHumidityDoesNotExist() {
         String humidity = "75";
         when(weatherRepository.findAllWeathersByHumidity(humidity))
                 .thenReturn(Optional.empty());
@@ -160,7 +161,7 @@ public class WeatherServiceTest {
 
 
     @Test
-    public void deleteWeatherById_whenIdExists_shouldDeleteWeather() {
+    public void testDeleteWeatherById_whenIdExists() {
         Weather weather = new Weather();
         weatherRepository.save(weather);
         long id = weather.getId();
@@ -171,7 +172,7 @@ public class WeatherServiceTest {
     }
 
     @Test
-    public void deleteWeatherById_whenIdDoesNotExist_shouldNotThrowException() {
+    public void testDeleteWeatherById_whenIdDoesNotExist() {
         long id = 1L;
 
         Throwable exception = catchThrowable(() -> weatherService.deleteWeatherById(id));
