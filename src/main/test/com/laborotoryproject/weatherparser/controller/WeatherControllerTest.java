@@ -1,8 +1,11 @@
 package com.laborotoryproject.weatherparser.controller;
 
 import com.laborotoryproject.weather.parser.WeatherParserApplication;
+import com.laborotoryproject.weather.parser.dto.WeatherDto;
 import com.laborotoryproject.weather.parser.entity.Weather;
-import com.laborotoryproject.weather.parser.repository.WeatherRepository;
+import com.laborotoryproject.weather.parser.exception.validate_exceptions.StringNotStartWithDigitException;
+import com.laborotoryproject.weather.parser.factory.WeatherDtoFactory;
+import com.laborotoryproject.weather.parser.service.WeatherService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -10,13 +13,14 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
+import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 
 import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @AutoConfigureMockMvc(addFilters = false)
 @SpringBootTest(classes = WeatherParserApplication.class)
@@ -26,165 +30,280 @@ public class WeatherControllerTest {
     MockMvc mockMvc;
 
     @MockBean
-    WeatherRepository weatherRepository;
+    WeatherService weatherService;
 
+    @MockBean
+    WeatherDtoFactory weatherDtoFactory;
 
     @Test
-    public void testGetBookById() throws Exception {
-        long id = 1;
-        Weather weather = new Weather(1, "12", "", "", "", "");
-        when(weatherRepository.findById(id)).thenReturn(Optional.of(weather));
+    public void testGetAllWeathersByPressure_validPressure() throws Exception {
+        String pressure = "751 мм";
+        List<Weather> mockWeather = List.of(
+                Weather.builder().build(),
+                Weather.builder().build()
+        );
+        List<WeatherDto> weathersDto = List.of(
+                WeatherDto.builder().pressure(pressure).build(),
+                WeatherDto.builder().pressure(pressure).build()
+        );
 
-        mockMvc.perform(MockMvcRequestBuilders.get("http://localhost:8080/api/v1/weather/{id}", id)
+        when(weatherService.findAllWeathersByPressure(pressure)).thenReturn(mockWeather);
+        when(weatherDtoFactory.makeListDto(mockWeather)).thenReturn(weathersDto);
+
+        mockMvc.perform(get("http://localhost:8080/api/v1/getAllWeathersByPressure/{pressure}", pressure)
                         .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.weather.id").doesNotExist());
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].pressure").value(pressure))
+                .andExpect(jsonPath("$[1].pressure").value(pressure));
 
-        verify(weatherRepository, times(1)).findById(anyLong());
-
+        verify(weatherService, times(1)).findAllWeathersByPressure(pressure);
+        verify(weatherDtoFactory, times(1)).makeListDto(mockWeather);
     }
 
     @Test
-    public void testGetBookById_WithDoesNotExistId() throws Exception {
-        long id = 1;
-        Weather weather = new Weather(1, "", "", "", "", "");
+    public void testGetAllWeathersByPressure_invalidPressure() throws Exception {
+        when(weatherService.findAllWeathersByPressure(anyString()))
+                .thenThrow(new StringNotStartWithDigitException("exception"));
 
-        when(weatherRepository.findById(id)).thenReturn(Optional.of(weather));
-
-        mockMvc.perform(MockMvcRequestBuilders.get("http://localhost:8080/api/v1/weather/{id}", 2)
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(MockMvcResultMatchers.status().isBadRequest())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.weather.id").doesNotExist());
-
-        verify(weatherRepository, times(1)).findById(anyLong());
-
+        mockMvc.perform(get("http://localhost:8080/api/v1/getAllWeathersByPressure/{pressure}", "pressure"))
+                .andExpect(status().isBadRequest());
+        verify(weatherService, times(1)).findAllWeathersByPressure("pressure");
     }
 
     @Test
-    public void testGetBookById_WithNoValidId() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.get("http://localhost:8080/api/v1/weather/{id}",
-                                "invalid-id")
+    public void testGetAllWeathersByTemperature_validTemperature() throws Exception {
+        String temp = "12";
+        List<Weather> mockWeather = List.of(
+                Weather.builder().build(),
+                Weather.builder().build()
+        );
+        List<WeatherDto> weathersDto = List.of(
+                WeatherDto.builder().temperature(temp).build(),
+                WeatherDto.builder().temperature(temp).build()
+        );
 
+        when(weatherService.findAllWeathersByTemperature(temp)).thenReturn(mockWeather);
+        when(weatherDtoFactory.makeListDto(mockWeather)).thenReturn(weathersDto);
+
+        mockMvc.perform(get("http://localhost:8080/api/v1/getAllWeathersByTemp/{temp}", temp)
                         .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(MockMvcResultMatchers.status().isBadRequest());
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].temperature").value(temp))
+                .andExpect(jsonPath("$[1].temperature").value(temp));
+
+        verify(weatherService, times(1)).findAllWeathersByTemperature(temp);
+        verify(weatherDtoFactory, times(1)).makeListDto(mockWeather);
     }
 
     @Test
-    public void testGetWeatherByCityName() throws Exception {
-        String cityName = "Москва";
-        Weather weather = new Weather(1, "", cityName, "", "", "");
-        when(weatherRepository.findWeatherByCityName(cityName)).thenReturn(Optional.of(weather));
+    public void testGetAllWeathersByTemperature_invalidTemperature() throws Exception {
+        when(weatherService.findAllWeathersByTemperature(anyString()))
+                .thenThrow(new StringNotStartWithDigitException("exception"));
 
-        mockMvc.perform(MockMvcRequestBuilders.get("http://localhost:8080/api/v1/weather/cityName/{cityName}", cityName)
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.weather.id").doesNotExist());
-        verify(weatherRepository, times(1)).findWeatherByCityName(cityName);
-
+        mockMvc.perform(get("http://localhost:8080/api/v1/getAllWeathersByTemp/{temp}", "temp"))
+                .andExpect(status().isBadRequest());
+        verify(weatherService, times(1)).findAllWeathersByTemperature("temp");
     }
 
     @Test
-    public void testGetWeatherByCityName_WithDoesNotExistCityName() throws Exception {
-        String cityName = "Москва";
-        Weather weather = new Weather(1, "", cityName, "", "", "");
+    public void testGetAllWeathersByHumidity_validHumidity() throws Exception {
+        String humidity = "76";
+        List<Weather> mockWeather = List.of(
+                Weather.builder().build(),
+                Weather.builder().build()
+        );
+        List<WeatherDto> weathersDto = List.of(
+                WeatherDto.builder().humidity(humidity).build(),
+                WeatherDto.builder().humidity(humidity).build()
+        );
 
-        when(weatherRepository.findWeatherByCityName(cityName)).thenReturn(Optional.of(weather));
+        when(weatherService.findAllWeathersByHumidity(humidity)).thenReturn(mockWeather);
+        when(weatherDtoFactory.makeListDto(mockWeather)).thenReturn(weathersDto);
 
-        mockMvc.perform(MockMvcRequestBuilders.get("http://localhost:8080/api/v1/weather/cityName/{cityName}", "city")
+        mockMvc.perform(get("http://localhost:8080/api/v1/getAllWeathersByHumidity/{humidity}", humidity)
                         .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(MockMvcResultMatchers.status().isBadRequest())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.weather.id").doesNotExist());
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].humidity").value(humidity))
+                .andExpect(jsonPath("$[1].humidity").value(humidity));
 
-        verify(weatherRepository, times(1)).findWeatherByCityName(anyString());
+        verify(weatherService, times(1)).findAllWeathersByHumidity(humidity);
+        verify(weatherDtoFactory, times(1)).makeListDto(mockWeather);
     }
 
     @Test
-    public void testGetWeatherByCityName_WithNoValidCityName() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.get("http://localhost:8080/api/v1/weather/cityName/{cityName}",
-                                "1")
+    public void testGetAllWeathersByHumidity_invalidHumidity() throws Exception {
+        when(weatherService.findAllWeathersByHumidity(anyString()))
+                .thenThrow(new StringNotStartWithDigitException("exception"));
 
+        mockMvc.perform(get("http://localhost:8080/api/v1/getAllWeathersByHumidity/{humidity}", "humidity"))
+                .andExpect(status().isBadRequest());
+        verify(weatherService, times(1)).findAllWeathersByHumidity("humidity");
+    }
+
+    @Test
+    public void testGetAllWeathersBySpeed_validSpeed() throws Exception {
+        String speed = "50 мс";
+        List<Weather> mockWeather = List.of(
+                Weather.builder().build(),
+                Weather.builder().build()
+        );
+        List<WeatherDto> weathersDto = List.of(
+                WeatherDto.builder().speed(speed).build(),
+                WeatherDto.builder().speed(speed).build()
+        );
+
+        when(weatherService.findAllWeathersBySpeed(speed)).thenReturn(mockWeather);
+        when(weatherDtoFactory.makeListDto(mockWeather)).thenReturn(weathersDto);
+
+        mockMvc.perform(get("http://localhost:8080/api/v1/getAllWeathersBySpeed/{speed}", speed)
                         .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(MockMvcResultMatchers.status().isBadRequest());
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].speed").value(speed))
+                .andExpect(jsonPath("$[1].speed").value(speed));
+
+        verify(weatherService, times(1)).findAllWeathersBySpeed(speed);
+        verify(weatherDtoFactory, times(1)).makeListDto(mockWeather);
+    }
+
+    @Test
+    public void testGetAllWeathersBySpeed_invalidSpeed() throws Exception {
+        when(weatherService.findAllWeathersBySpeed(anyString()))
+                .thenThrow(new StringNotStartWithDigitException("exception"));
+
+        mockMvc.perform(get("http://localhost:8080/api/v1/getAllWeathersBySpeed/{speed}", "speed"))
+                .andExpect(status().isBadRequest());
+        verify(weatherService, times(1)).findAllWeathersBySpeed("speed");
+    }
+
+    @Test
+    public void testGetWeatherByHumidity_validHumidity() throws Exception {
+        String humidity = "76";
+        Weather mockWeather = new Weather();
+        WeatherDto mockWeatherDto = WeatherDto.builder().humidity(humidity).build();
+
+        when(weatherService.findAllWeathersByHumidity(humidity)).thenReturn(Collections.singletonList(mockWeather));
+        when(weatherDtoFactory.makeDto(any(Weather.class))).thenReturn(mockWeatherDto);
+
+        mockMvc.perform(get("http://localhost:8080/api/v1/getWeatherByHumidity/{humidity}", humidity)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.humidity").value(humidity));
+
+        verify(weatherService, times(1)).findAllWeathersByHumidity(humidity);
+        verify(weatherDtoFactory, times(1)).makeDto(mockWeather);
+    }
+
+    @Test
+    public void testGetWeatherByHumidity_invalidHumidity() throws Exception {
+        when(weatherService.findAllWeathersByHumidity(anyString()))
+                .thenThrow(new StringNotStartWithDigitException("exception"));
+
+        mockMvc.perform(get("http://localhost:8080/api/v1/getWeatherByHumidity/{humidity}", "humidity"))
+                .andExpect(status().isBadRequest());
+        verify(weatherService, times(1)).findAllWeathersByHumidity("humidity");
+    }
+
+    @Test
+    public void testGetWeatherByTemperature_validTemperature() throws Exception {
+        String temperature = "0";
+        Weather mockWeather = new Weather();
+        WeatherDto mockWeatherDto = WeatherDto.builder().temperature(temperature).build();
+
+        when(weatherService.findAllWeathersByTemperature(temperature)).thenReturn(Collections.singletonList(mockWeather));
+        when(weatherDtoFactory.makeDto(any(Weather.class))).thenReturn(mockWeatherDto);
+
+        mockMvc.perform(get("http://localhost:8080/api/v1/getWeatherByTemperature/{temperature}", temperature)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.temperature").value(temperature));
+
+        verify(weatherService, times(1)).findAllWeathersByTemperature(temperature);
+        verify(weatherDtoFactory, times(1)).makeDto(mockWeather);
+    }
+
+    @Test
+    public void testGetWeatherByTemperature_invalidTemperature() throws Exception {
+        when(weatherService.findAllWeathersByTemperature(anyString()))
+                .thenThrow(new StringNotStartWithDigitException("exception"));
+
+        mockMvc.perform(get("http://localhost:8080/api/v1/getWeatherByTemperature/{temperature}", "temp"))
+                .andExpect(status().isBadRequest());
+        verify(weatherService, times(1)).findAllWeathersByTemperature("temp");
+    }
+
+    @Test
+    public void getWeatherByPressure_validPressure() throws Exception {
+        String pressure = "751 мм";
+        Weather mockWeather = new Weather();
+        WeatherDto mockWeatherDto = WeatherDto.builder().pressure(pressure).build();
+
+        when(weatherService.findAllWeathersByPressure(pressure)).thenReturn(Collections.singletonList(mockWeather));
+        when(weatherDtoFactory.makeDto(any(Weather.class))).thenReturn(mockWeatherDto);
+
+        mockMvc.perform(get("http://localhost:8080/api/v1/getWeatherByPressure/{pressure}", pressure)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.pressure").value(pressure));
+
+        verify(weatherService, times(1)).findAllWeathersByPressure(pressure);
+        verify(weatherDtoFactory, times(1)).makeDto(mockWeather);
+    }
+
+    @Test
+    public void testGetWeatherByPressure_invalidPressure() throws Exception {
+        when(weatherService.findAllWeathersByPressure(anyString()))
+                .thenThrow(new StringNotStartWithDigitException("exception"));
+
+        mockMvc.perform(get("http://localhost:8080/api/v1/getWeatherByPressure/{pressure}", "pressure"))
+                .andExpect(status().isBadRequest());
+        verify(weatherService, times(1)).findAllWeathersByPressure("pressure");
     }
 
 
     @Test
-    public void testGetAllWeathersByTemperature() throws Exception {
-        String temperature = "25.5";
-        Weather weather1 = new Weather(1, temperature, "", "", "", "");
-        Weather weather2 = new Weather(2, temperature, "", "", "", "");
-        when(weatherRepository.findWeatherByTemperature(temperature)).thenReturn(Optional.of(List.of(weather1, weather2)));
+    public void testGetWeatherBySpeed_validSpeed() throws Exception {
+        String speed = "50 мс";
+        Weather mockWeather = new Weather();
+        WeatherDto mockWeatherDto = WeatherDto.builder().speed(speed).build();
 
-        mockMvc.perform(MockMvcRequestBuilders.get("http://localhost:8080/api/v1/getAllWeathersByTemp/{temp}", temperature)
+        when(weatherService.findAllWeathersBySpeed(speed)).thenReturn(Collections.singletonList(mockWeather));
+        when(weatherDtoFactory.makeDto(any(Weather.class))).thenReturn(mockWeatherDto);
+
+        mockMvc.perform(get("http://localhost:8080/api/v1/getWeatherBySpeed/{speed}", speed)
                         .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.weather.id").doesNotExist());
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.speed").value(speed));
 
-        verify(weatherRepository, times(1)).findWeatherByTemperature(anyString());
+        verify(weatherService, times(1)).findAllWeathersBySpeed(speed);
+        verify(weatherDtoFactory, times(1)).makeDto(mockWeather);
+    }
+
+
+    @Test
+    public void testGetWeatherBySpeed_invalidSpeed() throws Exception {
+        when(weatherService.findAllWeathersBySpeed(anyString()))
+                .thenThrow(new StringNotStartWithDigitException("exception"));
+
+        mockMvc.perform(get("http://localhost:8080/api/v1/getWeatherBySpeed/{speed}", "speed"))
+                .andExpect(status().isBadRequest());
+        verify(weatherService, times(1)).findAllWeathersBySpeed("speed");
     }
 
     @Test
-    public void testGetAllWeathersByTemperature_WithDoesNotExistTemperature() throws Exception {
-        String temperature = "25.5";
-        Weather weather1 = new Weather(1, temperature, "", "", "", "");
-        Weather weather2 = new Weather(2, temperature, "", "", "", "");
+    public void testDeleteWeatherById_validId() throws Exception {
+        long weatherId = 1L;
 
-        when(weatherRepository.findWeatherByTemperature(temperature)).thenReturn(Optional.of(List.of(weather1, weather2)));
-
-        mockMvc.perform(MockMvcRequestBuilders.get("http://localhost:8080/api/v1/getAllWeathersByTemp/{temp}", "1231")
+        mockMvc.perform(delete("http://localhost:8080/api/v1/deleteWeatherById/{id}", weatherId)
                         .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(MockMvcResultMatchers.status().isBadRequest())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.weather.id").doesNotExist());
+                .andExpect(status().isNoContent());
 
-        verify(weatherRepository, times(1)).findWeatherByTemperature(anyString());
+        verify(weatherService, times(1)).deleteWeatherById(weatherId);
     }
 
     @Test
-    public void testGetAllWeathersByTemperature_WithNoValidTemperature() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.get("http://localhost:8080/api/v1/getAllWeathersByTemp/{temp}",
-                                "asd")
-
+    public void testDeleteWeatherById_invalidId() throws Exception {
+        mockMvc.perform(delete("http://localhost:8080/api/v1/deleteWeatherById/{id}", "id")
                         .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(MockMvcResultMatchers.status().isBadRequest());
-    }
-
-    @Test
-    public void getAllWeathersByPressure() throws Exception {
-        String pressure = "1000 мм";
-        Weather weather1 = new Weather(1, "", "", pressure, "", "");
-        Weather weather2 = new Weather(2, "", "", pressure, "", "");
-        when(weatherRepository.findWeatherByPressure(pressure)).thenReturn(Optional.of(List.of(weather1, weather2)));
-
-        mockMvc.perform(MockMvcRequestBuilders.get("http://localhost:8080/api/v1/getWeatherByPressure/{pressure}", pressure)
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.weather.id").doesNotExist());
-
-        verify(weatherRepository, times(1)).findWeatherByPressure(anyString());
-    }
-
-    @Test
-    public void testGetAllWeathersByPressure_WithDoesNotExistPressure() throws Exception {
-        String pressure = "1000 мм";
-        Weather weather1 = new Weather(1, "", "", "", pressure, "");
-        Weather weather2 = new Weather(2, "", "", "", pressure, "");
-
-        when(weatherRepository.findWeatherByPressure(pressure)).thenReturn(Optional.of(List.of(weather1, weather2)));
-
-        mockMvc.perform(MockMvcRequestBuilders.get("http://localhost:8080/api/v1/getWeatherByPressure/{pressure}", "111111")
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(MockMvcResultMatchers.status().isBadRequest())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.weather.id").doesNotExist());
-
-        verify(weatherRepository, times(1)).findWeatherByPressure(anyString());
-    }
-
-    @Test
-    public void testGetAllWeathersByPressure_WithNoValidPressure() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.get("http://localhost:8080/api/v1/getWeatherByPressure/{pressure}",
-                                "asd")
-
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(MockMvcResultMatchers.status().isBadRequest());
+                .andExpect(status().isBadRequest());
     }
 }
