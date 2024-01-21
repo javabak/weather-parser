@@ -1,11 +1,10 @@
 package com.laborotoryproject.weather.parser.mapper;
 
 import com.laborotoryproject.weather.parser.entity.MyUser;
-import com.laborotoryproject.weather.parser.entity.Role;
+import com.laborotoryproject.weather.parser.entity.enums.Role;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.lang.Nullable;
 
-import javax.swing.tree.TreePath;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
