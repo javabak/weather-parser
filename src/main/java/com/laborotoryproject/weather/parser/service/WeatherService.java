@@ -26,9 +26,13 @@ public class WeatherService {
     }
 
     public Weather findById(long id) {
-        return weatherRepository
-                .findById(id)
-                .orElseThrow(() -> new WeatherNotFound("weather with this id not found"));
+        if (checkId(String.valueOf(id))) {
+            return weatherRepository
+                    .findById(id)
+                    .orElseThrow(() -> new WeatherNotFound("weather with this id not found"));
+        } else {
+            throw new StringNotStartWithDigitException("id contains letters");
+        }
     }
 
     public Weather findWeatherByCityName(String cityName) {
@@ -48,7 +52,7 @@ public class WeatherService {
                     .filter(weathers -> weathers.stream().findFirst().isPresent())
                     .orElseThrow(() -> new WeatherNotFound("weather with this temperature not found"));
         } else {
-            throw new StringNotStartWithDigitException("temperature contains digit");
+            throw new StringNotStartWithDigitException("temperature contains letters");
         }
     }
 
@@ -73,14 +77,13 @@ public class WeatherService {
         }
     }
 
-
     public List<Weather> findAllWeathersByHumidity(String humidity) {
         if (checkStringForHumidity(humidity)) {
             return weatherRepository.findAllWeathersByHumidity(humidity)
                     .filter(weathers -> weathers.stream().findFirst().isPresent())
                     .orElseThrow(() -> new WeatherNotFound("weather with this humidity not found"));
         } else {
-            throw new StringNotStartWithDigitException("humidity contains digit");
+            throw new StringNotStartWithDigitException("humidity contains letters");
         }
     }
 
@@ -91,7 +94,7 @@ public class WeatherService {
                     .findById(id)
                     .ifPresent(weatherRepository::delete);
         } else {
-            throw new StringNotStartWithDigitException("id contains digit");
+            throw new StringNotStartWithDigitException("id contains letters");
         }
     }
 
