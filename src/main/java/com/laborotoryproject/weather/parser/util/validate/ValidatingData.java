@@ -4,35 +4,41 @@ import java.util.regex.Pattern;
 
 public class ValidatingData {
 
-    public boolean checkTemperatureInput(String string) {
+    public static boolean validateTemperature(String temperature) {
         String regex = "^-?\\d+(\\.\\d+)?$";
         Pattern pattern = Pattern.compile(regex);
-        return pattern.matcher(string).matches()
-               || (string.startsWith("-") && pattern.matcher(string).matches())
-               || (string.startsWith("0") && pattern.matcher(string).matches());
+        return pattern.matcher(temperature).matches()
+               || (temperature.startsWith("-") && pattern.matcher(temperature).matches())
+               || (temperature.startsWith("0") && pattern.matcher(temperature).matches());
     }
 
-    public boolean checkStringNotContainsDigit(String string) {
-        String regex = "^[^\\d]*$";
+    public static boolean validateCityName(String string) {
+        String regex = "^\\D*$";
         Pattern pattern = Pattern.compile(regex);
         return pattern.matcher(string.trim()).find();
     }
 
-    public boolean checkStringStartWithDigitAndContainsLetter(String string) {
-        String regex = "^\\d.*[a-zA-Zа-яА-Я]";
+    public static boolean validatePressure(String pressure) {
+        String regex = "^\\d+\\sмм$";
         Pattern pattern = Pattern.compile(regex);
-        return pattern.matcher(string.trim()).matches();
+        return pattern.matcher(pressure.trim()).matches();
     }
 
-    public boolean checkStringForHumidity(String string) {
-        String regex = "^\\d+%";
+    public static boolean validateSpeed(String speed) {
+        String regex = "^\\d+\\sмс$";
         Pattern pattern = Pattern.compile(regex);
-        return pattern.matcher(string.trim()).matches();
+        return pattern.matcher(speed.trim()).matches();
     }
 
-    public boolean checkId(String string) {
+    public static boolean validateHumidity(String humidity) {
         String regex = "^\\d+$";
         Pattern pattern = Pattern.compile(regex);
-        return pattern.matcher(string.trim()).matches();
+        return pattern.matcher(humidity.trim()).matches();
+    }
+
+    public static boolean validateId(Long id) {
+        String regex = "^\\d+$";
+        Pattern pattern = Pattern.compile(regex);
+        return pattern.matcher(String.valueOf(id).trim()).matches();
     }
 }
