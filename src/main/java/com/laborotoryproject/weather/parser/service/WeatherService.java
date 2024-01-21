@@ -26,7 +26,7 @@ public class WeatherService {
     }
 
     public Weather findById(long id) {
-        if (checkId(String.valueOf(id))) {
+        if (validateId(id)) {
             return weatherRepository
                     .findById(id)
                     .orElseThrow(() -> new WeatherNotFound("weather with this id not found"));
@@ -36,7 +36,7 @@ public class WeatherService {
     }
 
     public Weather findWeatherByCityName(String cityName) {
-        if (checkStringNotContainsDigit(cityName)) {
+        if (validateCityName(cityName)) {
             return weatherRepository
                     .findWeatherByCityName(cityName)
                     .orElseThrow(() -> new CityNotFoundException("city not found"));
@@ -47,7 +47,7 @@ public class WeatherService {
 
 
     public List<Weather> findAllWeathersByTemperature(String temperature) {
-        if (checkTemperatureInput(temperature)) {
+        if (validateTemperature(temperature)) {
             return weatherRepository.findAllWeathersByTemperature(temperature)
                     .filter(weathers -> weathers.stream().findFirst().isPresent())
                     .orElseThrow(() -> new WeatherNotFound("weather with this temperature not found"));
@@ -58,7 +58,7 @@ public class WeatherService {
 
 
     public List<Weather> findAllWeathersByPressure(String pressure) {
-        if (checkStringStartWithDigitAndContainsLetter(pressure)) {
+        if (validatePressure(pressure)) {
             return weatherRepository.findAllWeathersByPressure(pressure)
                     .filter(weathers -> weathers.stream().findFirst().isPresent())
                     .orElseThrow(() -> new WeatherNotFound("weather with this pressure not found"));
@@ -68,7 +68,7 @@ public class WeatherService {
     }
 
     public List<Weather> findAllWeathersBySpeed(String speed) {
-        if (checkStringStartWithDigitAndContainsLetter(speed)) {
+        if (validateSpeed(speed)) {
             return weatherRepository.findAllWeathersBySpeed(speed)
                     .filter(weathers -> weathers.stream().findFirst().isPresent())
                     .orElseThrow(() -> new WeatherNotFound("weather with this speed not found"));
@@ -78,7 +78,7 @@ public class WeatherService {
     }
 
     public List<Weather> findAllWeathersByHumidity(String humidity) {
-        if (checkStringForHumidity(humidity)) {
+        if (validateHumidity(humidity)) {
             return weatherRepository.findAllWeathersByHumidity(humidity)
                     .filter(weathers -> weathers.stream().findFirst().isPresent())
                     .orElseThrow(() -> new WeatherNotFound("weather with this humidity not found"));
@@ -89,7 +89,7 @@ public class WeatherService {
 
 
     public void deleteWeatherById(long id) {
-        if (checkId(String.valueOf(id))) {
+        if (validateId(id)) {
             weatherRepository
                     .findById(id)
                     .ifPresent(weatherRepository::delete);
