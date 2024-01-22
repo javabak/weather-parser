@@ -13,23 +13,23 @@ produces:
   - application/json
 paths:
 
-  /weather/citiName/{cityName} :
+  /weather/cityName/{cityName}:
     parameters:
-      - name : cityName
+      - name: cityName
         in: path
         required: true
         type: string
         description: unique meaning for weather search
     get:
       responses:
-        200 :
+        200:
           description: Returns the weather by city_name
           schema:
-            $ref : '#/definitions/Weather'
-        404 :
+            $ref: '#/definitions/WeatherDto'
+        404:
           description: Resource not found
           schema:
-            default: {}
+            default: { }
 
   /weather/{id}:
     parameters:
@@ -40,36 +40,36 @@ paths:
         description: unique meaning for weather search
     get:
       responses:
-        200 :
+        200:
           description: Returns a weather by id
           schema:
-            $ref: '#/definitions/Weather'
+            $ref: '#/definitions/WeatherDto'
         404:
           description: Resource not found
           schema:
-            default: {}
+            default: { }
 
-  /getAllWeathersByTemp/{temp} :
+  /getAllWeathersByTemp/{temp}:
     parameters:
-      - name : temp
+      - name: temp
         in: path
         required: true
         type: string
         description: required for weather search
     get:
       responses:
-        200 :
+        200:
           description: Returns all weathers by temp
           schema:
             type: array
             items:
-              $ref: '#/definitions/Weather'
+              $ref: '#/definitions/WeatherDto'
         404:
           description: Resource not found
           schema:
-            default: {}
+            default: { }
 
-  /getAllWeathersByPressure/{pressure} :
+  /getAllWeathersByPressure/{pressure}:
     parameters:
       - name: pressure
         in: path
@@ -83,13 +83,13 @@ paths:
           schema:
             type: array
             items:
-              $ref: '#/definitions/Weather'
+              $ref: '#/definitions/WeatherDto'
         404:
           description: Resource not found
           schema:
-            default: {}
+            default: { }
 
-  /getAllWeathersBySpeed/{speed} :
+  /getAllWeathersBySpeed/{speed}:
     parameters:
       - name: speed
         in: path
@@ -103,13 +103,34 @@ paths:
           schema:
             type: array
             items:
-              $ref: '#/definitions/Weather'
+              $ref: '#/definitions/WeatherDto'
         404:
           description: Resource not found
           schema:
-            default: {}
+            default: { }
 
-  /getWeatherBySpeed/{speed} :
+  /getAllWeathersByHumidity/{humidity}:
+    parameters:
+      - name: humidity
+        in: path
+        required: true
+        type: string
+        description: required for weather search
+    get:
+      responses:
+        200:
+          description: Returns all weathers by humidity
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/WeatherDto'
+        404:
+          description: Resource not found
+          schema:
+            default: { }
+
+
+  /getWeatherBySpeed/{speed}:
     parameters:
       - name: speed
         in: path
@@ -121,13 +142,13 @@ paths:
         200:
           description: Returns a weather by speed
           schema:
-            $ref: '#/definitions/Weather'
+            $ref: '#/definitions/WeatherDto'
         404:
           description: Resource not found
           schema:
-            default: {}
+            default: { }
 
-  /getWeatherByPressure/{pressure} :
+  /getWeatherByPressure/{pressure}:
     parameters:
       - name: pressure
         in: path
@@ -139,13 +160,13 @@ paths:
         200:
           description: Returns a weather by pressure
           schema:
-            $ref: '#/definitions/Weather'
+            $ref: '#/definitions/WeatherDto'
         404:
           description: Resource not found
           schema:
-            default: {}
+            default: { }
 
-  /getWeatherByTemperature/{temperature} :
+  /getWeatherByTemperature/{temperature}:
     parameters:
       - name: temperature
         in: path
@@ -157,31 +178,46 @@ paths:
         200:
           description: Returns a weather by temperature
           schema:
-            $ref: '#/definitions/Weather'
+            $ref: '#/definitions/WeatherDto'
         404:
           description: Resource not found
           schema:
-            default: {}
+            default: { }
+
+  /getWeatherByHumidity/{humidity}:
+    parameters:
+      - name: humidity
+        in: path
+        required: true
+        type: string
+        description: required for weather search
+    get:
+      responses:
+        200:
+          description: Returns a weather by humidity
+          schema:
+            $ref: '#/definitions/WeatherDto'
+        404:
+          description: Resource not found
+          schema:
+            default: { }
 
 definitions:
-  Weather:
+  WeatherDto:
     type: object
     properties:
-      id:
-        type: integer
-        example: 1
       temperature:
         type: string
         example: +5
       cityName:
         type: string
         example: Москва
-      humidity :
+      humidity:
         type: string
         example: 68%
-      pressure :
+      pressure:
         type: string
         example: 760мм
-      speed :
+      speed:
         type: string
         example: 1 м/с
