@@ -5,7 +5,7 @@ create table user(
     position varchar(125) not null,
     password varchar(125) not null,
     role varchar(125) not null,
-    permissions varchar(125) not null
+    permissions varchar(255) not null
 );
 insert into user(login, position, password, role, permissions) values('user', 'position1', 'password', 'USER', 'WEATHER_GET');
-insert into user(login, position, password, role, permissions) values('admin', 'position2', 'password', 'ADMIN', 'WEATHER_DELETE');
+insert into user(login, position, password, role, permissions) values('admin', 'position2', 'password', 'ADMIN', 'WEATHER_GET');
