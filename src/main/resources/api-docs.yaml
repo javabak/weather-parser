@@ -202,6 +202,22 @@ paths:
           schema:
             default: { }
 
+  /deleteWeatherById/{id}:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        type: integer
+        description: required to delete weather
+    delete:
+      responses:
+        200:
+          description: Returns nothing
+        404:
+          description: Resource not found
+          schema:
+            default: { }
+
 definitions:
   WeatherDto:
     type: object
