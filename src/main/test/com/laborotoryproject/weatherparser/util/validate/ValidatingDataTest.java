@@ -1,4 +1,4 @@
-package com.laborotoryproject.weatherparser.utils.validate;
+package com.laborotoryproject.weatherparser.util.validate;
 
 import org.junit.jupiter.api.Test;
 
