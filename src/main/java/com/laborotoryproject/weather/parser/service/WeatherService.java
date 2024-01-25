@@ -1,13 +1,15 @@
 package com.laborotoryproject.weather.parser.service;
 
 import com.laborotoryproject.weather.parser.entity.Weather;
-import com.laborotoryproject.weather.parser.exception.request_exceptions.*;
+import com.laborotoryproject.weather.parser.exception.request_exceptions.CityNotFoundException;
+import com.laborotoryproject.weather.parser.exception.request_exceptions.WeatherNotFound;
 import com.laborotoryproject.weather.parser.exception.validate_exceptions.StringContainsDigitException;
 import com.laborotoryproject.weather.parser.exception.validate_exceptions.StringNotStartWithDigitException;
 import com.laborotoryproject.weather.parser.repository.WeatherRepository;
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -25,6 +27,7 @@ public class WeatherService {
         this.weatherRepository = weatherRepository;
     }
 
+    @Cacheable(key = "#id", value = "weather-by-id")
     public Weather findById(long id) {
         if (validateId(id)) {
             return weatherRepository
@@ -35,6 +38,7 @@ public class WeatherService {
         }
     }
 
+    @Cacheable(key = "#cityName", value = "weather-by-cityName")
     public Weather findWeatherByCityName(String cityName) {
         if (validateCityName(cityName)) {
             return weatherRepository
@@ -46,6 +50,7 @@ public class WeatherService {
     }
 
 
+    @Cacheable(key = "#temperature", value = "weather-by-temperature")
     public List<Weather> findAllWeathersByTemperature(String temperature) {
         if (validateTemperature(temperature)) {
             return weatherRepository.findAllWeathersByTemperature(temperature)
@@ -57,6 +62,7 @@ public class WeatherService {
     }
 
 
+    @Cacheable(key = "#pressure", value = "weather-by-pressure")
     public List<Weather> findAllWeathersByPressure(String pressure) {
         if (validatePressure(pressure)) {
             return weatherRepository.findAllWeathersByPressure(pressure)
@@ -67,6 +73,7 @@ public class WeatherService {
         }
     }
 
+    @Cacheable(key = "#speed", value = "weather-by-speed")
     public List<Weather> findAllWeathersBySpeed(String speed) {
         if (validateSpeed(speed)) {
             return weatherRepository.findAllWeathersBySpeed(speed)
@@ -77,6 +84,7 @@ public class WeatherService {
         }
     }
 
+    @Cacheable(key = "#humidity", value = "weather-by-humidity")
     public List<Weather> findAllWeathersByHumidity(String humidity) {
         if (validateHumidity(humidity)) {
             return weatherRepository.findAllWeathersByHumidity(humidity)
