@@ -1,5 +1,6 @@
 version: '3.3'
 services:
+
   mysql:
     image: mysql:latest
     container_name: mysql-container
@@ -9,7 +10,7 @@ services:
       MYSQL_USERNAME: ${DATABASE_USERNAME}
       MYSQL_PORT: ${DATABASE_PORT}
     ports:
-      - "3307:3307"
+      - "3307:3306"
     volumes:
       - ./mysql-data:/var/lib/mysql
     env_file:
@@ -19,15 +20,16 @@ services:
     image: weather-parser:latest
     container_name: weather-parser-container
     build:
-      context: ./
+      context: .
       dockerfile: Dockerfile
     depends_on:
       - mysql
     ports:
       - "8080:8080"
     environment:
-      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql:${DATABASE_PORT}/${DATABASE_NAME}?allowPublicKeyRetrieval=true
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql:${DATABASE_PORT}/${DATABASE_NAME}
       - SPRING_DATASOURCE_USERNAME=${DATABASE_USERNAME}
       - SPRING_DATASOURCE_PASSWORD=${DATABASE_PASSWORD}
     env_file:
       - .env
+    restart: always

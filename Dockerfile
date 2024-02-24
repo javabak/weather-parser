@@ -1,4 +1,10 @@
+FROM maven:3.8.5-openjdk-17 AS build
+COPY /src /src
+COPY /pom.xml /
+RUN mvn -f /pom.xml clean package
+
+
 FROM openjdk:17
-COPY target/weather-parser-0.0.1-SNAPSHOT.jar weather.jar
+COPY --from=build /target/weather-parser-0.0.1-SNAPSHOT.jar weather.jar
 EXPOSE 8080
-ENTRYPOINT ["java", "-jar", "weather.jar"]
+CMD ["java", "-jar", "weather.jar"]
